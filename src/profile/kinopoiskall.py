@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 #BY Nikolasi for indb
+from __future__ import print_function
 import re
 from urllib2 import Request, URLError, HTTPError, urlopen as urlopen2, quote as urllib2_quote, unquote as urllib2_unquote
 import urllib
@@ -29,7 +30,7 @@ def comment_out(str):
     except:
         pass
 
-    print '# %s' % (s,)
+    print('# %s' % (s,))
 
 
 def debug_out(str):
@@ -45,7 +46,7 @@ def response_out(str):
         except:
             pass
 
-        print s
+        print(s)
 
 
 def print_exception(str):
@@ -311,7 +312,7 @@ def search_title(title):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     content = watchvideopage.read().decode('cp1251').encode('utf-8')
     watchvideopage.close()
@@ -399,7 +400,7 @@ def search_title2(title):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     content = watchvideopage.read().decode('cp1251').encode('utf-8')
     watchvideopage.close()
@@ -507,7 +508,7 @@ def search_data(id):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     data = watchvideopage.read().decode('cp1251').encode('utf-8')
     content_results = '%s' % data.replace('     ', '').replace('\n', '').replace('\t', '')
@@ -595,7 +596,7 @@ def search_comets(id):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     content = watchvideopage.read().decode('cp1251').encode('utf-8')
     watchvideopage.close()
@@ -617,7 +618,7 @@ def search_poster(id):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     data = watchvideopage.read().decode('cp1251').encode('utf-8')
     coveritems = []
@@ -630,7 +631,7 @@ def search_poster(id):
         try:
             watchvideopage2 = urlopen2(watchrequest2)
         except (URLError, HTTPException, socket.error) as err:
-            print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+            print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
         data2 = watchvideopage2.read().decode('cp1251').encode('utf-8')
         coveritem = ''
@@ -647,7 +648,7 @@ def poster_save(id):
     try:
         watchvideopage2 = urlopen2(watchrequest2)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     data2 = watchvideopage2.read().decode('cp1251').encode('utf-8')
     coveritem = ''
@@ -662,7 +663,7 @@ def poster_viem(id):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     data = watchvideopage.read().decode('cp1251').encode('utf-8')
     search_results = []
@@ -698,7 +699,7 @@ def search_tmbd(title):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     data = watchvideopage.read()
     search_results = []
@@ -741,7 +742,7 @@ def poster_viemtmbd(id):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     data = watchvideopage.read()
     search_results = []
@@ -773,7 +774,7 @@ def search_postermp3(url):
     try:
         watchvideopage = urlopen2(watchrequest)
     except (URLError, HTTPException, socket.error) as err:
-        print '[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err)
+        print('[Kinopoisk] Error: Unable to retrieve page - Error code: ', str(err))
 
     data = watchvideopage.read()
     search_results = []

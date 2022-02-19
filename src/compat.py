@@ -1,3 +1,4 @@
+from __future__ import print_function
 from re import compile
 from sys import version_info
 
@@ -35,7 +36,7 @@ if version_info >= (2, 7, 9):
 		import ssl
 		sslContext = ssl._create_unverified_context()
 	except Exception as e:
-		print('[YouTube] Error in set ssl context', e)
+		print(('[YouTube] Error in set ssl context', e))
 
 
 def _parse_qsl(qs):

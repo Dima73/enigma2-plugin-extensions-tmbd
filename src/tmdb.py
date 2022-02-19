@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Components.config import config
 from Components.PluginComponent import plugins
 from Plugins.Plugin import PluginDescriptor
@@ -71,47 +72,47 @@ def main():
     setLocale('de')
     tmdb3 = init_tmdb3()
     res = tmdb3.searchMovie('F\xc3\xbcr immer Liebe')
-    print res
+    print(res)
     movie = res[0]
-    print movie.title
-    print movie.releasedate.year
-    print movie.overview
+    print(movie.title)
+    print(movie.releasedate.year)
+    print(movie.overview)
     for p in movie.posters:
-        print p
+        print(p)
 
     for p in movie.backdrops:
-        print p
+        print(p)
 
     p = movie.poster
-    print p
-    print p.sizes()
-    print p.geturl()
-    print p.geturl('w185')
+    print(p)
+    print(p.sizes())
+    print(p.geturl())
+    print(p.geturl('w185'))
     p = movie.backdrop
-    print p
-    print p.sizes()
-    print p.geturl()
-    print p.geturl('w300')
+    print(p)
+    print(p.sizes())
+    print(p.geturl())
+    print(p.geturl('w300'))
     crew = [x.name for x in movie.crew if x.job == 'Director']
-    print crew
+    print(crew)
     crew = [x.name for x in movie.crew if x.job == 'Author']
-    print crew
+    print(crew)
     crew = [x.name for x in movie.crew if x.job == 'Producer']
-    print crew
+    print(crew)
     crew = [x.name for x in movie.crew if x.job == 'Director of Photography']
-    print crew
+    print(crew)
     crew = [x.name for x in movie.crew if x.job == 'Editor']
-    print crew
+    print(crew)
     crew = [x.name for x in movie.crew if x.job == 'Production Design']
-    print crew
+    print(crew)
     cast = [x.name for x in movie.cast]
-    print cast
+    print(cast)
     genres = [x.name for x in movie.genres]
-    print genres
+    print(genres)
     studios = [x.name for x in movie.studios]
-    print studios
+    print(studios)
     countries = [x.name for x in movie.countries]
-    print countries
+    print(countries)
 
 
 if __name__ == '__main__':

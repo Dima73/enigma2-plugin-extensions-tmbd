@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 
 from json import load
@@ -73,7 +74,7 @@ if os.path.exists('/etc/enigma2/YouTube.key'):
 			elif 'CLIENT_SECRET' in line[0]:
 				YOUTUBE_API_CLIENT_SECRET = line[1]
 	except Exception as ex:
-		print('[YouTube] Error in read YouTube.key:', ex)
+		print(('[YouTube] Error in read YouTube.key:', ex))
 
 
 class tmbdYTTrailer:
@@ -225,12 +226,12 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 		self.decodeThumbnail(entryId, image)
 
 	def downloadFailed(self, entryId, result):
-		print "[TMBD] Thumbnail download failed!"
+		print("[TMBD] Thumbnail download failed!")
 		self.decodeThumbnail(entryId)
 
 	def decodeThumbnail(self, entryId, image=None):
 		if not image or not os.path.exists(image):
-			print "[TMBD] Thumbnail not exists, use default for", entryId
+			print("[TMBD] Thumbnail not exists, use default for", entryId)
 			image = resolveFilename(SCOPE_PLUGINS,
 				'Extensions/TMBD/yt_default.png')
 		self.picloads[entryId] = ePicLoad()

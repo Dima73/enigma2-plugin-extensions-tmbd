@@ -1,3 +1,4 @@
+from __future__ import print_function
 ###############################################################################
 # dvbstring.py module
 #
@@ -236,28 +237,28 @@ def convertDVBUTF8(data, length, table=None):
 		#print "convertDVBUTF8(): (0x10)text encoded in ISO-8859-%d" % (n);
 		i += 3
 		if n == 12:
-			print "convertDVBUTF8(): unsup. ISO8859-12 enc."
+			print("convertDVBUTF8(): unsup. ISO8859-12 enc.")
 		else:
 			table = n
 	elif data[0] == 0x11: #  Basic Multilingual Plane of ISO/IEC 10646-1 enc  (UTF-16... Unicode)
 		table = 65
 		i += 1
 	elif data[0] == 0x12:
-		print "convertDVBUTF8(): unsup. KSC 5601 enc."
+		print("convertDVBUTF8(): unsup. KSC 5601 enc.")
 		i += 1
 	elif data[0] == 0x13:
-		print "convertDVBUTF8(): unsup. GB-2312-1980 enc."
+		print("convertDVBUTF8(): unsup. GB-2312-1980 enc.")
 		i += 1
 	elif data[0] == 0x14:
-		print "convertDVBUTF8(): unsup. Big5 subset of ISO/IEC 10646-1 enc."
+		print("convertDVBUTF8(): unsup. Big5 subset of ISO/IEC 10646-1 enc.")
 		i += 1
 	elif data[0] == 0x15: # UTF-8 encoding of ISO/IEC 10646-1
 		return ''.join([chr(x) for x in data[1:length - 1]])
 	elif data[0] == 0x1F:
-		print "convertDVBUTF8(): unsup. BBC Freesat Huffman enc."
+		print("convertDVBUTF8(): unsup. BBC Freesat Huffman enc.")
 		i += 1
 	elif data[0] in [0x0, 0xC, 0xD, 0xE, 0xF] + range(0x16, 0x1F):
-		print "convertDVBUTF8(): reserved %d" % (data[0])
+		print("convertDVBUTF8(): reserved %d" % (data[0]))
 		i += 1
 
 	res = [0] * 2048
@@ -292,7 +293,7 @@ def convertDVBUTF8(data, length, table=None):
 			res[t + 3] = chr((code & 0x3F) | 0x80)
 			t += 4
 		if (t + 4 > 2047):
-			print "convertDVBUTF8():  buffer to small.. break now"
+			print("convertDVBUTF8():  buffer to small.. break now")
 			break
 	return ''.join([x for x in res if x != 0])
 
@@ -326,7 +327,7 @@ def convertUTF8DVB(string, table):
 					if table in range(2, 17) and table != 12:
 						coding_table = eval('c8859%d' % (table))
 					else:
-						print "unknown coding table:", table
+						print("unknown coding table:", table)
 						coding_table = 0
 				if coding_table:
 					for j in range(96):
@@ -338,7 +339,7 @@ def convertUTF8DVB(string, table):
 		except Exception, e:
 			#fd = open('/tmp/dvbstring.log', 'a+');
 			#print>>fd, 'convertUTF8DVB(): error: %s (c [c1,c2]= 0x%x [0x%02x, 0x%02x]; index/length = %d/%d)' % (e, c, c1, c2, i, length-1);
-			print 'error'
+			print('error')
 		i += 1
 	if res:
 		if table in (1, 2, 3, 4, 16):

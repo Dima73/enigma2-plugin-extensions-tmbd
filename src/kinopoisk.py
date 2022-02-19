@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import httplib
 import urllib
 import re
@@ -109,7 +110,7 @@ def getText(title):
 				outstr += U8Translit[i]
 			else:
 				outstr += c.encode("utf-8")
-	print '%s' % (outstr)
+	print('%s' % (outstr))
 	return outstr
 
 #Замена различных спецсимволов и тегов HTML на обычные символы,
