@@ -336,7 +336,7 @@ def convertUTF8DVB(string, table):
 							break
 		try:
 			res += chr(c)
-		except Exception, e:
+		except Exception as e:
 			#fd = open('/tmp/dvbstring.log', 'a+');
 			#print>>fd, 'convertUTF8DVB(): error: %s (c [c1,c2]= 0x%x [0x%02x, 0x%02x]; index/length = %d/%d)' % (e, c, c1, c2, i, length-1);
 			print('error')
