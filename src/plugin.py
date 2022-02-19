@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import print_function
 from . import _
 from Plugins.Plugin import PluginDescriptor
 from twisted.web.client import downloadPage
@@ -550,7 +551,7 @@ class TMBD(Screen):
 			except:
 				testOK = None
 			if not testOK:
-				print 'Conection failed'
+				print('Conection failed')
 				self.resetLabels()
 				self["statusbar"].setText(_("No connect to www.themoviedb.org"))
 				self["title"].setText("")
@@ -1904,7 +1905,7 @@ class KinoRu(Screen):
 			except:
 				testOK = None
 			if not testOK:
-				print 'Conection failed'
+				print('Conection failed')
 				self.resetLabels()
 				self["statusbar"].setText(_("No connect to kinopoisk.ru..."))
 				s.close()
@@ -2192,7 +2193,7 @@ class KinoRu(Screen):
 			try:
 				res = urllib2.urlopen(req)
 			except:
-				print 'The server couldn\'t fulfill the request.'
+				print('The server couldn\'t fulfill the request.')
 				res = None
 			if res != None:
 				page = res.read()

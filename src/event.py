@@ -1,3 +1,4 @@
+from __future__ import print_function
 ###############################################################################
 # event.py module
 #
@@ -290,7 +291,7 @@ class Event:
 		except:
 			import traceback
 			fd = open('/tmp/event.log', 'a+')
-			print>>fd, 'readFromFile(): error:\n', traceback.format_exc()
+			print('readFromFile(): error:\n', traceback.format_exc(), file=fd)
 
 		return buffer is None and -1 or buffer.buffer_info()[1]
 
@@ -308,7 +309,7 @@ class Event:
 		except:
 			import traceback
 			fd = open('/tmp/event.log', 'a+')
-			print>>fd, 'saveToFile(): error:\n', traceback.format_exc()
+			print('saveToFile(): error:\n', traceback.format_exc(), file=fd)
 			res = -1
 
 		return res
