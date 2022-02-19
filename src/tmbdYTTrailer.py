@@ -1,9 +1,9 @@
-from __future__ import print_function
+
 import os
 
 from json import load
-from urllib import quote
-from urllib2 import urlopen
+from urllib.parse import quote
+from urllib.request import urlopen
 from twisted.web.client import downloadPage
 
 from enigma import ePicLoad, eTimer, eServiceReference
@@ -36,7 +36,7 @@ config.plugins.tmbd_yttrailer.close_player_with_exit = ConfigYesNo(False)
 config.plugins.tmbd_yttrailer.search = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
 
 
-from YouTubeVideoUrl import YouTubeVideoUrl
+from .YouTubeVideoUrl import YouTubeVideoUrl
 
 
 def GetKey(x):

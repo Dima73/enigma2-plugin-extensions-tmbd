@@ -45,8 +45,7 @@ class CacheEngineType(type):
             Engines.register(cls)
 
 
-class CacheEngine(object):
-    __metaclass__ = CacheEngineType
+class CacheEngine(object, metaclass=CacheEngineType):
     name = 'unspecified'
 
     def __init__(self, parent):

@@ -7,15 +7,15 @@
 #-----------------------
 
 from copy import copy
-from locales import get_locale
-from tmdb_auth import get_session
+from .locales import get_locale
+from .tmdb_auth import get_session
 
 
 class NameRepr(object):
     """Mixin for __repr__ methods using 'name' attribute."""
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.name}'>"\
+        return "<{0.__class__.__name__} '{0.name}'>"\
                     .format(self).encode('utf-8')
 
 
@@ -27,7 +27,7 @@ class SearchRepr(object):
 
     def __repr__(self):
         name = self._name if self._name else self._request._kwargs['query']
-        return u"<Search Results: {0}>".format(name).encode('utf-8')
+        return "<Search Results: {0}>".format(name).encode('utf-8')
 
 
 class Poller(object):
@@ -85,7 +85,7 @@ class Poller(object):
     def apply(self, data, set_nones=True):
         # apply data directly, bypassing callable function
         unfilled = False
-        for k, v in self.lookup.items():
+        for k, v in list(self.lookup.items()):
             if (k in data) and (not callable(self.func) or data[k] is not None):
                 # argument received data, populate it
                 setattr(self.inst, v, data[k])
@@ -113,7 +113,7 @@ class Data(object):
     """
 
     def __init__(self, field, initarg=None, handler=None, poller=None,
-                 raw=True, default=u'', lang=None, passthrough={}):
+                 raw=True, default='', lang=None, passthrough={}):
         """
         This defines how the dictionary value is to be processed by the
         poller
@@ -226,7 +226,7 @@ class Datalist(Data):
                     val._locale = inst._locale
                     val._session = inst._session
 
-                    for source, dest in self.passthrough.items():
+                    for source, dest in list(self.passthrough.items()):
                         setattr(val, dest, getattr(inst, source))
 
                 data.append(val)
@@ -293,7 +293,7 @@ class Datadict(Data):
                     val._locale = inst._locale
                     val._session = inst._session
 
-                    for source, dest in self.passthrough.items():
+                    for source, dest in list(self.passthrough.items()):
                         setattr(val, dest, getattr(inst, source))
 
                 data[self.getkey(val)] = val
@@ -316,7 +316,7 @@ class ElementType(type):
 
         for base in reversed(bases):
             if isinstance(base, mcs):
-                for k, attr in base.__dict__.items():
+                for k, attr in list(base.__dict__.items()):
                     if isinstance(attr, Data):
                         # extract copies of each defined Data element from
                         # parent classes
@@ -327,7 +327,7 @@ class ElementType(type):
                         # extract copies of each defined Poller function
                         # from parent classes
                         pollers[k] = attr.func
-        for k, attr in attrs.items():
+        for k, attr in list(attrs.items()):
             if isinstance(attr, Data):
                 data[k] = attr
         if '_populate' in attrs:
@@ -338,7 +338,7 @@ class ElementType(type):
         # which Data points
         pollermap = dict([(k, []) for k in pollers])
         initargs = []
-        for k, v in data.items():
+        for k, v in list(data.items()):
             v.name = k
             if v.initarg:
                 initargs.append(v)
@@ -354,7 +354,7 @@ class ElementType(type):
 
         # wrap each used poller function with a Poller class, and push into
         # the new class attributes
-        for k, v in pollermap.items():
+        for k, v in list(pollermap.items()):
             if len(v) == 0:
                 continue
             lookup = dict([(attr.field, attr.name) for attr in v])
@@ -404,6 +404,5 @@ class ElementType(type):
         return obj
 
 
-class Element(object):
-    __metaclass__ = ElementType
+class Element(object, metaclass=ElementType):
     _lang = 'en'

@@ -78,16 +78,16 @@ __version__ = "v0.7.3"
 #        PEP8 fixes and some typos
 #        Updated readme
 
-from request import set_key, Request
-from util import Datapoint, Datalist, Datadict, Element, NameRepr, SearchRepr
-from pager import PagedRequest
-from locales import get_locale, set_locale
-from tmdb_auth import get_session, set_session
-from tmdb_exceptions import *
+from .request import set_key, Request
+from .util import Datapoint, Datalist, Datadict, Element, NameRepr, SearchRepr
+from .pager import PagedRequest
+from .locales import get_locale, set_locale
+from .tmdb_auth import get_session, set_session
+from .tmdb_exceptions import *
 
 import json
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import datetime
 
 DEBUG = False
@@ -267,7 +267,7 @@ class Image(Element):
         if size not in self.sizes():
             raise TMDBImageSizeError
         url = Configuration.images['base_url'].rstrip('/')
-        return url + u'/{0}/{1}'.format(size, self.filename)
+        return url + '/{0}/{1}'.format(size, self.filename)
 
     # sort preferring locale's language, but keep remaining ordering consistent
     def __lt__(self, other):
@@ -289,14 +289,14 @@ class Image(Element):
         return self.filename == other.filename
 
     # special handling for boolean to see if exists
-    def __nonzero__(self):
+    def __bool__(self):
         if len(self.filename) == 0:
             return False
         return True
 
     def __repr__(self):
         # BASE62 encoded filename, no need to worry about unicode
-        return u"<{0.__class__.__name__} '{0.filename}'>".format(self)
+        return "<{0.__class__.__name__} '{0.filename}'>".format(self)
 
 
 class Backdrop(Image):
@@ -336,7 +336,7 @@ class AlternateTitle(Element):
         return self.country == other.country
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.title}' ({0.country})>"\
+        return "<{0.__class__.__name__} '{0.title}' ({0.country})>"\
                .format(self).encode('utf-8')
 
 
@@ -357,7 +357,7 @@ class Person(Element):
     popularity = Datapoint('popularity')
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.name}'>"\
+        return "<{0.__class__.__name__} '{0.name}'>"\
                             .format(self).encode('utf-8')
 
     def _populate(self):
@@ -382,7 +382,7 @@ class Cast(Person):
     order = Datapoint('order')
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.name}' as '{0.character}'>"\
+        return "<{0.__class__.__name__} '{0.name}' as '{0.character}'>"\
                .format(self).encode('utf-8')
 
 
@@ -391,7 +391,7 @@ class Crew(Person):
     department = Datapoint('department')
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.name}','{0.job}'>"\
+        return "<{0.__class__.__name__} '{0.name}','{0.job}'>"\
                .format(self).encode('utf-8')
 
 
@@ -400,7 +400,7 @@ class Keyword(Element):
     name = Datapoint('name')
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.name}'>"\
+        return "<{0.__class__.__name__} '{0.name}'>"\
                .format(self).encode('utf-8')
 
 
@@ -410,7 +410,7 @@ class Release(Element):
     releasedate = Datapoint('release_date', handler=process_date)
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.country}', {0.releasedate}>"\
+        return "<{0.__class__.__name__} '{0.country}', {0.releasedate}>"\
                .format(self).encode('utf-8')
 
 
@@ -430,7 +430,7 @@ class Video(Element):
             return "http://www.youtube.com/watch?v={0}".format(self.key)
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.name}'>".format(self)
+        return "<{0.__class__.__name__} '{0.name}'>".format(self)
 
 
 class Trailer(Element):
@@ -446,7 +446,7 @@ class YoutubeTrailer(Trailer):
 
     def __repr__(self):
         # modified BASE64 encoding, no need to worry about unicode
-        return u"<{0.__class__.__name__} '{0.name}'>".format(self)
+        return "<{0.__class__.__name__} '{0.name}'>".format(self)
 
 
 class AppleTrailer(Element):
@@ -454,7 +454,7 @@ class AppleTrailer(Element):
     sources = Datadict('sources', handler=Trailer, attr='size')
 
     def sizes(self):
-        return self.sources.keys()
+        return list(self.sources.keys())
 
     def geturl(self, size=None):
         if size is None:
@@ -465,7 +465,7 @@ class AppleTrailer(Element):
         return self.sources[size].source
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.name}'>".format(self)
+        return "<{0.__class__.__name__} '{0.name}'>".format(self)
 
 
 class Translation(Element):
@@ -474,7 +474,7 @@ class Translation(Element):
     englishname = Datapoint('english_name')
 
     def __repr__(self):
-        return u"<{0.__class__.__name__} '{0.name}' ({0.language})>"\
+        return "<{0.__class__.__name__} '{0.name}' ({0.language})>"\
                .format(self).encode('utf-8')
 
 
@@ -491,7 +491,7 @@ class Genre(NameRepr, Element):
         if 'movies' not in self._data:
             search = MovieSearchResult(self._populate_movies(),
                                        locale=self._locale)
-            search._name = u"{0.name} Movies".format(self)
+            search._name = "{0.name} Movies".format(self)
             self._data['movies'] = search
         return self._data['movies']
 
@@ -528,7 +528,7 @@ class Studio(NameRepr, Element):
         if 'movies' not in self._data:
             search = MovieSearchResult(self._populate_movies(),
                                        locale=self._locale)
-            search._name = u"{0.name} Movies".format(self)
+            search._name = "{0.name} Movies".format(self)
             self._data['movies'] = search
         return self._data['movies']
 
@@ -776,17 +776,17 @@ class Movie(Element):
 
     def _printable_name(self):
         if self.title is not None:
-            s = u"'{0}'".format(self.title)
+            s = "'{0}'".format(self.title)
         elif self.originaltitle is not None:
-            s = u"'{0}'".format(self.originaltitle)
+            s = "'{0}'".format(self.originaltitle)
         else:
-            s = u"'No Title'"
+            s = "'No Title'"
         if self.releasedate:
-            s = u"{0} ({1})".format(s, self.releasedate.year)
+            s = "{0} ({1})".format(s, self.releasedate.year)
         return s
 
     def __repr__(self):
-        return u"<{0} {1}>".format(self.__class__.__name__,
+        return "<{0} {1}>".format(self.__class__.__name__,
                                    self._printable_name()).encode('utf-8')
 
 
@@ -794,7 +794,7 @@ class ReverseCast(Movie):
     character = Datapoint('character')
 
     def __repr__(self):
-        return (u"<{0.__class__.__name__} '{0.character}' on {1}>"
+        return ("<{0.__class__.__name__} '{0.character}' on {1}>"
                 .format(self, self._printable_name()).encode('utf-8'))
 
 
@@ -803,7 +803,7 @@ class ReverseCrew(Movie):
     job = Datapoint('job')
 
     def __repr__(self):
-        return (u"<{0.__class__.__name__} '{0.job}' for {1}>"
+        return ("<{0.__class__.__name__} '{0.job}' for {1}>"
                 .format(self, self._printable_name()).encode('utf-8'))
 
 

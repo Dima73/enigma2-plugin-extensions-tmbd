@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 ###############################################################################
 # dvbstring.py module
 #
@@ -257,7 +257,7 @@ def convertDVBUTF8(data, length, table=None):
 	elif data[0] == 0x1F:
 		print("convertDVBUTF8(): unsup. BBC Freesat Huffman enc.")
 		i += 1
-	elif data[0] in [0x0, 0xC, 0xD, 0xE, 0xF] + range(0x16, 0x1F):
+	elif data[0] in [0x0, 0xC, 0xD, 0xE, 0xF] + list(range(0x16, 0x1F)):
 		print("convertDVBUTF8(): reserved %d" % (data[0]))
 		i += 1
 

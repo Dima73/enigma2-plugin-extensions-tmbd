@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from __future__ import print_function
+
 from . import _
 from Plugins.Plugin import PluginDescriptor
 from twisted.web.client import downloadPage
@@ -40,20 +40,20 @@ import sys
 import re
 import gettext
 import random
-import tmdb
-import urllib
+from . import tmdb
+import urllib.request, urllib.parse, urllib.error
 import array
 import struct
 import fcntl
 import shutil
 from socket import socket, AF_INET, SOCK_STREAM, SOCK_DGRAM, SHUT_RDWR
-from event import Event, ShortEventDescriptor, ExtendedEventDescriptor
+from .event import Event, ShortEventDescriptor, ExtendedEventDescriptor
 from time import strftime, localtime, mktime
 from Screens.Standby import TryQuitMainloop
-from meta import MetaParser, getctime, fileSize
-import kinopoisk
-import urllib2
-import tmbdYTTrailer
+from .meta import MetaParser, getctime, fileSize
+from . import kinopoisk
+import urllib.request, urllib.error, urllib.parse
+from . import tmbdYTTrailer
 
 try:
 	from Plugins.Extensions.SubsSupport.subtitles import E2SubsSeeker, SubsSearch, initSubsSettings, SubsSetupGeneral, SubsSearchSettings, SubsSetupExternal, SubsSetupEmbedded
@@ -680,7 +680,7 @@ class TMBD(Screen):
 					if image is not None:
 						cover_url = image.geturl()
 					if cover_url:
-						urllib.urlretrieve(cover_url, jpg_file)
+						urllib.request.urlretrieve(cover_url, jpg_file)
 				except:
 					pass
 				self.refreshTimer.start(100, True)
@@ -1494,7 +1494,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 	def initConfig(self):
 		def getPrevValues(section):
 			res = {}
-			for (key, val) in section.content.items.items():
+			for (key, val) in list(section.content.items.items()):
 				if isinstance(val, ConfigSubsection):
 					res[key] = getPrevValues(val)
 				else:
@@ -1652,7 +1652,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 
 	def exit(self):
 		def setPrevValues(section, values):
-			for (key, val) in section.content.items.items():
+			for (key, val) in list(section.content.items.items()):
 				value = values.get(key, None)
 				if value is not None:
 					if isinstance(val, ConfigSubsection):
@@ -2189,9 +2189,9 @@ class KinoRu(Screen):
 				id = id[:-3]
 			url = 'http://st.kinopoisk.ru/images/film/%s.jpg' % (id)
 			user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'
-			req = urllib2.Request(url, headers={'User-agent': user_agent, 'Accept': 'text/html'})
+			req = urllib.request.Request(url, headers={'User-agent': user_agent, 'Accept': 'text/html'})
 			try:
-				res = urllib2.urlopen(req)
+				res = urllib.request.urlopen(req)
 			except:
 				print('The server couldn\'t fulfill the request.')
 				res = None

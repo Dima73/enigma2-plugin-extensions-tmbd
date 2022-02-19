@@ -1,7 +1,7 @@
 # This code comes from youtube-dl: https://github.com/rg3/youtube-dl/blob/master/youtube_dl/jsinterp.py
 
-from __future__ import unicode_literals
-from __future__ import print_function
+
+
 
 import json
 import operator

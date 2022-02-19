@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
-import httplib
-import urllib
+
+import http.client
+import urllib.request, urllib.parse, urllib.error
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 try:
 	from lxml import html
 	from lxml import etree
@@ -64,7 +64,7 @@ U8Translit = {
 def comment_out(str):
 	s = str
 	try:
-		s = unicode(str, "utf8")
+		s = str(str, "utf8")
 	except:
 		pass
 
@@ -80,7 +80,7 @@ def response_out(str):
 	if DUMP_RESPONSE:
 		s = str
 		try:
-			s = unicode(str, "utf8")
+			s = str(str, "utf8")
 		except:
 			pass
 		print(s)
@@ -145,7 +145,7 @@ def normilize_string(processingstring):
         '&#251;': 'û', '&ucirc;': 'û', '&#252;': 'ü', '&uuml;': 'ü', '&#253;': 'ý', '&yacute;': 'ý', '&#254;': 'þ', '&thorn;': 'þ',
         '&#255;': 'ÿ', '&yuml;': 'ÿ', '&#133;': '...', '&#151;': '-', '<br><br>': ' ', '<br />': '', '\r': '', '\n': '', '  ': ' '}
         for i in range(len(symbols_to_remove)):
-            processingstring = string.replace(processingstring, unicode(symbols_to_remove.items()[i][0], 'utf-8'), unicode(symbols_to_remove.items()[i][1], 'utf-8'))
+            processingstring = string.replace(processingstring, str(list(symbols_to_remove.items())[i][0], 'utf-8'), str(list(symbols_to_remove.items())[i][1], 'utf-8'))
         return processingstring
     except:
         return ''
@@ -153,7 +153,7 @@ def normilize_string(processingstring):
 
 def outXML(rootElm):
     outfile = sys.stdout
-    handle = unicode(etree.tostring(rootElm, pretty_print=True, encoding='utf-8', xml_declaration=True), 'utf-8')
+    handle = str(etree.tostring(rootElm, pretty_print=True, encoding='utf-8', xml_declaration=True), 'utf-8')
     outfile.writelines(handle)
     outfile.close()
 
@@ -162,14 +162,14 @@ def outXML(rootElm):
 
 def get_page(address, data=0, title=''):
     try:
-        opener = urllib2.build_opener()
+        opener = urllib.request.build_opener()
 
         if data == 0:
             #address = u'http://s.kinopoisk.ru' + address+urllib.quote(title.encode('utf8'))
-            address = u'http://www.kinopoisk.ru' + address + urllib.quote(title.encode('cp1251'))
+            address = 'http://www.kinopoisk.ru' + address + urllib.parse.quote(title.encode('cp1251'))
         else:
             #address = u'http://www.kinopoisk.ru' + address+urllib.quote(title.encode('utf8'))
-            address = u'http://www.kinopoisk.ru' + address + urllib.quote(title.encode('cp1251'))
+            address = 'http://www.kinopoisk.ru' + address + urllib.parse.quote(title.encode('cp1251'))
 
         opener.addheaders = [("Host", "www.kinopoisk.ru"),
                                 ('User-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'),
@@ -237,7 +237,7 @@ def search_title(title):
     doc = html.document_fromstring(data)
     search_results = []
     #Проверяем ту ли страницу (т.е. страницу с результатами поиска) мы получили
-    regexp = re.compile(unicode("Скорее всего, вы ищете:", "utf8"), re.DOTALL)
+    regexp = re.compile(str("Скорее всего, вы ищете:", "utf8"), re.DOTALL)
     result = regexp.search(data)
     #if result == None:
         #Если не ту, то парсим страницу фильма на которую нас перенаправил кинопоиск
@@ -343,33 +343,33 @@ def search_data(uid):
         infoNodes = doc.xpath("//table[@class='info']/*")
         for infoNode in infoNodes:
             dataNodes = infoNode.xpath("td")
-            if dataNodes[0].text == u"год":
+            if dataNodes[0].text == "год":
                 try:
                     filmdata['year'] = dataNodes[0].xpath("//table[@class='info']//td//div//a/text()")[0]
                 except:
                     filmdata['year'] = ''
-            elif dataNodes[0].text == u"страна":
+            elif dataNodes[0].text == "страна":
                 try:
                     filmdata['countries'] = addMultiValues(dataNodes[1], ("div/a", "/a"))
                 except:
                     filmdata['countries'] = ''
-            elif dataNodes[0].text == u"режиссер":
+            elif dataNodes[0].text == "режиссер":
                 try:
                     filmdata['directors'] = addMultiValues(dataNodes[1], ("a", "/a"))
                 except:
                     filmdata['directors'] = ''
-            elif dataNodes[0].text == u"жанр":
+            elif dataNodes[0].text == "жанр":
                 try:
                     film_data = addMultiValues(dataNodes[1], ("span/a", "/a"))
                     filmdata['genre'] = film_data.replace('музыка', '').replace('слова', '')
                 except:
                     filmdata['genre'] = ''
-            elif dataNodes[0].text == u"время":
+            elif dataNodes[0].text == "время":
                 try:
                     filmdata['runtime'] = dataNodes[1].text.split()[0]
                 except:
                     filmdata['runtime'] = ''
-            elif dataNodes[0].text == u"рейтинг MPAA":
+            elif dataNodes[0].text == "рейтинг MPAA":
                 try:
                     filmdata['movie_rating'] = dataNodes[1].xpath("a")[0].attrib["href"].split("/")[-2]
                 except:
