@@ -938,7 +938,7 @@ class SoupStrainer:
     def _matches(self, markup, matchAgainst):
         #print "Matching %s against %s" % (markup, matchAgainst)
         result = False
-        if matchAgainst == True and type(matchAgainst) == types.BooleanType:
+        if matchAgainst == True and isinstance(matchAgainst, types.BooleanType):
             result = markup != None
         elif callable(matchAgainst):
             result = matchAgainst(markup)
@@ -1815,7 +1815,7 @@ class UnicodeDammit:
         entity."""
         orig = match.group(1)
         sub = self.MS_CHARS.get(orig)
-        if type(sub) == types.TupleType:
+        if isinstance(sub, types.TupleType):
             if self.smartQuotesTo == 'xml':
                 sub = '&#x'.encode() + sub[1].encode() + ';'.encode()
             else:
