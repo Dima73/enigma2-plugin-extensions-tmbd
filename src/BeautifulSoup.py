@@ -1412,7 +1412,7 @@ class BeautifulStoneSoup(Tag):
         if self.quoteStack:
             #This is not a real tag.
             #print "<%s> is not real!" % name
-            attrs = ''.join(map(lambda(x, y): ' %s="%s"' % (x, y), attrs))
+            attrs = ''.join(map(lambda x, y: ' %s="%s"' % (x, y), attrs))
             self.handle_data('<%s%s>' % (name, attrs))
             return
         self.endData()
