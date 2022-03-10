@@ -2759,12 +2759,15 @@ class MovielistPreview():
 			if movie and self.mayShow and config.plugins.tmbd.enabled.value:
 				png2 = os.path.split(movie)[1]
 				if movie.endswith(".ts"):
-					if fileExists("%s.meta" % (movie)):
-						readmetafile = open("%s.meta" % (movie), "r")
-						servicerefname = readmetafile.readline()[0:-1]
-						eventname = readmetafile.readline()[0:-1]
-						readmetafile.close()
-						png2 = eventname
+					try:
+						if fileExists("%s.meta" % (movie)):
+							readmetafile = open("%s.meta" % (movie), "r")
+							servicerefname = readmetafile.readline()[0:-1]
+							eventname = readmetafile.readline()[0:-1]
+							readmetafile.close()
+							png2 = eventname
+					except UnicodeDecodeError as err:
+							print("UnicodeDecodeError: '%s' '%s'" % (err, movie))
 				png = self.path + png2 + ".jpg"
 				if fileExists(png):
 					self.working = True
