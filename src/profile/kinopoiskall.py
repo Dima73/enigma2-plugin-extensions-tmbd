@@ -1,14 +1,16 @@
 # -*- coding: UTF-8 -*-
 #BY Nikolasi for indb
-from __future__ import print_function
+
 import re
-from urllib2 import Request, URLError, HTTPError, urlopen as urlopen2, quote as urllib2_quote, unquote as urllib2_unquote
-import urllib
+from urllib.request import Request, urlopen as urlopen2
+from urllib.error import URLError, HTTPError
+from urllib.parse import quote as urllib2_quote, unquote as urllib2_unquote
+import urllib.request, urllib.parse, urllib.error
 from socket import gaierror, error
-import httplib
-import urllib
+import http.client
+import urllib.request, urllib.parse, urllib.error
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import string
 import time
 import os
@@ -16,7 +18,7 @@ import socket
 import sys
 import traceback
 import codecs
-from httplib import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
+from http.client import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
 std_headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2',
  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.7',
  'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
@@ -26,7 +28,7 @@ std_headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv
 def comment_out(str):
     s = str
     try:
-        s = unicode(str, 'utf8')
+        s = str(str, 'utf8')
     except:
         pass
 
@@ -42,7 +44,7 @@ def response_out(str):
     if DUMP_RESPONSE:
         s = str
         try:
-            s = unicode(str, 'utf8')
+            s = str(str, 'utf8')
         except:
             pass
 
@@ -262,7 +264,7 @@ def normilize_string(processingstring):
          '<span>': '',
          '</span>': ''}
         for i in range(len(symbols_to_remove)):
-            processingstring = string.replace(processingstring, symbols_to_remove.items()[i][0], symbols_to_remove.items()[i][1])
+            processingstring = string.replace(processingstring, list(symbols_to_remove.items())[i][0], list(symbols_to_remove.items())[i][1])
 
         return processingstring
     except:
@@ -306,7 +308,7 @@ def search_title(title):
     genres = ''
     search = ''
     title = title.replace(' ', '%20').decode('utf8')
-    encoded_args = urllib.quote(title.encode('cp1251'))
+    encoded_args = urllib.parse.quote(title.encode('cp1251'))
     url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=%s' % encoded_args
     watchrequest = Request(url, None, std_headers)
     try:
@@ -394,7 +396,7 @@ def search_title2(title):
     runtime = ''
     time = ''
     title = title.replace(' ', '%20').decode('utf8')
-    encoded_args = urllib.quote(title.encode('cp1251'))
+    encoded_args = urllib.parse.quote(title.encode('cp1251'))
     url = 'http://www.kinopoisk.ru/index.php?first=no&what=&kp_query=%s' % encoded_args
     watchrequest = Request(url, None, std_headers)
     try:

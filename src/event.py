@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 ###############################################################################
 # event.py module
 #
@@ -22,7 +22,7 @@ from __future__ import print_function
 
 import array
 import time
-from dvbstring import convertDVBUTF8, convertUTF8DVB
+from .dvbstring import convertDVBUTF8, convertUTF8DVB
 
 
 def fromBCD(bcd):

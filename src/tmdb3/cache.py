@@ -7,15 +7,15 @@
 # Purpose: Caching framework to store TMDb API results
 #-----------------------
 
-from __future__ import print_function
+
 import time
 import os
 
-from tmdb_exceptions import *
-from cache_engine import Engines
+from .tmdb_exceptions import *
+from .cache_engine import Engines
 
-import cache_null
-import cache_file
+from . import cache_null
+from . import cache_file
 
 DEBUG = False
 
@@ -52,7 +52,7 @@ class Cache(object):
                 self._age = max(self._age, obj.creation)
 
     def _expire(self):
-        for k, v in self._data.items():
+        for k, v in list(self._data.items()):
             if v.expired:
                 del self._data[k]
 
