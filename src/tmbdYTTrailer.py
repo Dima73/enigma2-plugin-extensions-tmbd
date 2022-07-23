@@ -217,7 +217,7 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 			if not entry[2]:
 				self.decodeThumbnail(entry[0])
 			else:
-				downloadPage(entry[2], os.path.join('/tmp/', str(entry[0]) + '.jpg'))\
+				downloadPage(entry[2].encode(), os.path.join('/tmp/', str(entry[0]) + '.jpg'))\
 					.addCallback(boundFunction(self.downloadFinished, entry[0]))\
 					.addErrback(boundFunction(self.downloadFailed, entry[0]))
 
