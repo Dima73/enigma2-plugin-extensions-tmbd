@@ -6,7 +6,7 @@
 # Author: Raymond Wagner
 #-----------------------
 
-from collections import Sequence, Iterator
+from collections.abc import Sequence, Iterator
 
 
 class PagedIterator(Iterator):
