@@ -686,7 +686,7 @@ class TMBD(Screen):
 				self.refreshTimer.start(100, True)
 				Casttext = ""
 				try:
-					name = movie.title.encode('utf-8', 'ignore')
+					name = movie.title
 				except:
 					name = ''
 				if name != '':
@@ -720,7 +720,7 @@ class TMBD(Screen):
 					description = ''
 				if description != '':
 					try:
-						description_text = description.encode('utf-8', 'ignore')
+						description_text = description
 						Casttext += description_text
 					except:
 						pass
@@ -771,7 +771,7 @@ class TMBD(Screen):
 					pass
 				Extratext = ""
 				try:
-					genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
+					genres = [x.name for x in movie.genres]
 				except:
 					genres = []
 				if len(genres) > 0:
@@ -781,7 +781,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					crew = [x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Director']
+					crew = [x.name for x in movie.crew if x.job == 'Director']
 				except:
 					crew = []
 				if len(crew) > 0:
@@ -791,7 +791,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					crew1 = [x.name.encode('utf-8', 'ignore') for x in movie.crew if x.job == 'Producer']
+					crew1 = [x.name for x in movie.crew if x.job == 'Producer']
 				except:
 					crew1 = []
 				if len(crew1) > 0:
@@ -801,7 +801,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
+					cast = [x.name for x in movie.cast]
 				except:
 					cast = []
 				if len(cast) > 0:
@@ -812,7 +812,7 @@ class TMBD(Screen):
 						pass
 				Extratext2 = ""
 				try:
-					studios = [x.name.encode('utf-8', 'ignore') for x in movie.studios]
+					studios = [x.name for x in movie.studios]
 				except:
 					studios = []
 				if len(studios) > 0:
@@ -980,14 +980,14 @@ class TMBD(Screen):
 			if current:
 				movie = current[1]
 				try:
-					namedetals = current[0].decode('utf-8', 'replace').encode('utf-8', 'ignore')
+					namedetals = current[0]
 				except:
 					return
 				if not movie2.endswith(".ts"):
 					if namedetals2 != "":
 						Extratext2 = "%s /" % (namedetals2)
 				try:
-					genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
+					genres = [x.name for x in movie.genres]
 				except:
 					genres = []
 				if len(genres) > 0:
@@ -1011,7 +1011,7 @@ class TMBD(Screen):
 					except:
 						pass
 				try:
-					cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
+					cast = [x.name for x in movie.cast]
 				except:
 					cast = []
 				if len(cast) > 0:
@@ -1070,7 +1070,7 @@ class TMBD(Screen):
 		if current:
 			movie = current[1]
 			try:
-				namedetals = current[0].decode('utf-8', 'replace').encode('utf-8', 'ignore')
+				namedetals = current[0]
 			except:
 				return
 			try:
@@ -1088,7 +1088,7 @@ class TMBD(Screen):
 				except:
 					pass
 			try:
-				genres = [x.name.encode('utf-8', 'ignore') for x in movie.genres]
+				genres = [x.name for x in movie.genres]
 			except:
 				genres = []
 			if len(genres) > 0:
@@ -1103,7 +1103,7 @@ class TMBD(Screen):
 				description = ''
 			if description != '':
 				try:
-					description_text = description.encode('utf-8', 'ignore')
+					description_text = description
 					descrip = " %s\n" % description_text
 				except:
 					pass
@@ -1130,7 +1130,7 @@ class TMBD(Screen):
 				except:
 					pass
 			try:
-				cast = [x.name.encode('utf-8', 'ignore') for x in movie.cast]
+				cast = [x.name for x in movie.cast]
 			except:
 				cast = []
 			if len(cast) > 0:
@@ -1371,7 +1371,7 @@ class TMBD(Screen):
 			self.resultlist = []
 			for searchResult in results:
 				try:
-					name = searchResult.title.encode('utf-8', 'ignore')
+					name = searchResult.title
 					self.resultlist.append((name, searchResult))
 					total = len(results)
 					if len(results) > 0:
@@ -2088,7 +2088,7 @@ class KinoRu(Screen):
 						self.removCovers()
 						self.refreshTimer.start(100, True)
 						try:
-							rating = film_data['user_rating'].encode("utf-8")
+							rating = film_data['user_rating']
 						except:
 							rating = ''
 						Ratingtext = ''
@@ -2101,7 +2101,7 @@ class KinoRu(Screen):
 							self.rating = rating
 						self["ratinglabel"].setText(Ratingtext)
 						try:
-							votes = film_data['rating_count'].encode("utf-8")
+							votes = film_data['rating_count']
 						except:
 							votes = ''
 						Votestext = ''
@@ -2112,21 +2112,21 @@ class KinoRu(Screen):
 						Extratext = ""
 						Extratext2 = ""
 						try:
-							countrie = film_data['countries'].encode("utf-8")
+							countrie = film_data['countries']
 						except:
 							countrie = ''
 						if countrie != '':
 							Extratext2 = "%s: %s\n" % (_("Country"), countrie)
 							self.countrie = countrie
 						try:
-							year = film_data['year'].encode("utf-8")
+							year = film_data['year']
 						except:
 							year = ''
 						if year != '':
 							Extratext2 += "%s: %s\n" % (_("Appeared"), year)
 							self.year = year
 						try:
-							runtime = film_data['runtime'].encode("utf-8")
+							runtime = film_data['runtime']
 						except:
 							runtime = ''
 						if runtime != '' and runtime != '-':
@@ -2134,35 +2134,35 @@ class KinoRu(Screen):
 							Extratext2 += "%s: %s\n" % (_("Duration"), runtimes)
 							self.runtimes = runtimes
 						try:
-							genres = film_data['genre'].encode("utf-8")
+							genres = film_data['genre']
 						except:
 							genres = ''
 						if genres != '':
 							Extratext2 += "%s: %s\n" % (_("Genre"), genres)
 							self.genres = genres
 						try:
-							director = film_data['directors'].encode("utf-8")
+							director = film_data['directors']
 						except:
 							director = ''
 						if director != '':
 							Extratext2 += "%s: %s\n" % (_("Director"), director)
 							self.director = director
 						try:
-							cast = film_data['cast'].encode("utf-8")
+							cast = film_data['cast']
 						except:
 							cast = ''
 						if cast != '':
 							Extratext = "%s: %s\n" % (_("Actors"), cast)
 							self.cast = cast
 						try:
-							age = film_data['movie_rating'].encode("utf-8")
+							age = film_data['movie_rating']
 						except:
 							age = ''
 						if age != '':
 							Extratext += "%s: %s\n" % (_("Age"), age)
 							self.age = age
 						try:
-							duplicated = film_data['duplicate'].encode("utf-8")
+							duplicated = film_data['duplicate']
 						except:
 							duplicated = ''
 						if duplicated != '':
@@ -2171,7 +2171,7 @@ class KinoRu(Screen):
 							self.duplicated = duplicated
 						self["extralabel"].setText("%s%s" % (Extratext2, Extratext))
 						try:
-							plot = film_data['plot'].encode("utf-8")
+							plot = film_data['plot']
 						except:
 							plot = ''
 						if plot != '':
