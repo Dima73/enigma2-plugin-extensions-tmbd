@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 from Components.config import config
 from Components.PluginComponent import plugins
 from Plugins.Plugin import PluginDescriptor
@@ -44,7 +44,7 @@ def prevImageIndex(movie):
 
 
 def init_tmdb3(alternative_lang=None):
-    import tmdb3
+    from . import tmdb3
     tmdb3.set_key('1f834eb425728133b9a2c1c0c82980eb')
     tmdb3.set_cache('null')
     lng = alternative_lang or config.plugins.tmbd.locale.value

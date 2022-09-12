@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # This video extraction code based on youtube-dl: https://github.com/rg3/youtube-dl
 
-from __future__ import print_function
+
 
 import re
 

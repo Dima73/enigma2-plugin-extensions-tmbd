@@ -8,13 +8,13 @@
 #          TMDb v3 API
 #-----------------------
 
-from __future__ import print_function
-from tmdb_exceptions import *
-from locales import get_locale
-from cache import Cache
 
-from urllib import urlencode
-import urllib2
+from .tmdb_exceptions import *
+from .locales import get_locale
+from .cache import Cache
+
+from urllib.parse import urlencode
+import urllib.request, urllib.error, urllib.parse
 import json
 import os
 
@@ -44,7 +44,7 @@ def set_cache(engine=None, *args, **kwargs):
     cache.configure(engine, *args, **kwargs)
 
 
-class Request(urllib2.Request):
+class Request(urllib.request.Request):
     _api_key = None
     _base_url = "http://api.themoviedb.org/3/"
 
@@ -62,19 +62,19 @@ class Request(urllib2.Request):
         """
         kwargs['api_key'] = self.api_key
         self._url = url.lstrip('/')
-        self._kwargs = dict([(kwa, kwv) for kwa, kwv in kwargs.items()
+        self._kwargs = dict([(kwa, kwv) for kwa, kwv in list(kwargs.items())
                                         if kwv is not None])
 
         locale = get_locale()
         kwargs = {}
-        for k, v in self._kwargs.items():
-            if isinstance(v, unicode):
+        for k, v in list(self._kwargs.items()):
+            if isinstance(v, str):
                 kwargs[k] = v.encode('utf-8')
             else:
                 kwargs[k] = str(v)
         url = '{0}{1}?{2}'.format(self._base_url, self._url, urlencode(kwargs))
 
-        urllib2.Request.__init__(self, url)
+        urllib.request.Request.__init__(self, url)
         self.add_header('Accept', 'application/json')
         self.lifetime = 3600  # 1hr
 
@@ -83,7 +83,7 @@ class Request(urllib2.Request):
         Create a new instance of the request, with tweaked arguments.
         """
         args = dict(self._kwargs)
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             if v is None:
                 if k in args:
                     del args[k]
@@ -95,7 +95,7 @@ class Request(urllib2.Request):
 
     def add_data(self, data):
         """Provide data to be sent with POST."""
-        urllib2.Request.add_data(self, urlencode(data))
+        urllib.request.Request.add_data(self, urlencode(data))
 
     def open(self):
         """Open a file object to the specified URL."""
@@ -104,15 +104,15 @@ class Request(urllib2.Request):
                 print('loading ' + self.get_full_url())
                 if self.has_data():
                     print('  ' + self.get_data())
-            return urllib2.urlopen(self)
-        except urllib2.HTTPError as e:
+            return urllib.request.urlopen(self)
+        except urllib.error.HTTPError as e:
             raise TMDBHTTPError(e)
 
     def read(self):
         """Return result from specified URL as a string."""
         return self.open().read()
 
-    @cache.cached(urllib2.Request.get_full_url)
+    @cache.cached(urllib.request.Request.get_full_url)
     def readJSON(self):
         """Parse result from specified URL as JSON data."""
         url = self.get_full_url()

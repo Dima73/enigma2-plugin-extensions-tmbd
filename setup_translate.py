@@ -2,7 +2,7 @@
 
 # Language extension for distutils Python scripts. Based on this concept:
 # http://wiki.maemo.org/Internationalize_a_Python_application
-from __future__ import print_function
+
 from distutils import cmd
 from distutils.command.build import build as _build
 import glob
@@ -26,8 +26,7 @@ class build_trans(cmd.Command):
 				if lang.endswith('.po'):
 					src = os.path.join(s, lang)
 					lang = lang[:-3]
-					destdir = os.path.join('build', 'lib', 'Extensions',
-						'TMBD', 'locale', lang, 'LC_MESSAGES')
+					destdir = os.path.join('src', 'locale', lang, 'LC_MESSAGES')
 					if not os.path.exists(destdir):
 						os.makedirs(destdir)
 					for lang_domain in lang_domains:
