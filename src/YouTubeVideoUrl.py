@@ -259,11 +259,6 @@ class YouTubeVideoUrl():
 		if not is_live and streaming_formats:
 			streaming_formats.extend(streaming_data.get('adaptiveFormats', []))
 
-			##if config.plugins.YouTube.useDashMP4.value:
-			##	self.use_dash_mp4 = []
-			##else:  # pragma: no cover
-			##	print('[YouTubeVideoUrl] skip DASH MP4 format')
-			##	self.use_dash_mp4 = DASHMP4_FORMAT
 			self.use_dash_mp4 = DASHMP4_FORMAT
 
 			url, our_format = self._extract_fmt_video_format(streaming_formats)
