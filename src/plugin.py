@@ -3,7 +3,6 @@
 
 from . import _
 from Plugins.Plugin import PluginDescriptor
-from twisted.web.client import downloadPage
 from threading import Thread
 from enigma import ePicLoad, eServiceReference, eTimer, eServiceCenter, getDesktop, ePoint, eSize, iPlayableService, eListbox
 from Screens.Screen import Screen
