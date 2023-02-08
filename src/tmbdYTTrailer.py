@@ -4,7 +4,7 @@ import os
 from json import load
 from urllib.parse import quote
 from urllib.request import urlopen
-from treq import get, collect
+from twisted.web.client import downloadPage
 
 from enigma import ePicLoad, eTimer, eServiceReference
 from Components.ActionMap import ActionMap, HelpableActionMap
@@ -217,11 +217,9 @@ class TmbdYTTrailerList(Screen, tmbdYTTrailer):
 			if not entry[2]:
 				self.decodeThumbnail(entry[0])
 			else:
-				f = open(os.path.join('/tmp/', str(entry[0]) + '.jpg'), "wb")
-				get(entry[2]).addCallback(collect, f.write)\
+				downloadPage(entry[2].encode(), os.path.join('/tmp/', str(entry[0]) + '.jpg'))\
 					.addCallback(boundFunction(self.downloadFinished, entry[0]))\
-					.addErrback(boundFunction(self.downloadFailed, entry[0]))\
-					.addBoth(lambda _: f.close())
+					.addErrback(boundFunction(self.downloadFailed, entry[0]))
 
 	def downloadFinished(self, entryId, result):
 		image = os.path.join('/tmp/', str(entryId) + '.jpg')
