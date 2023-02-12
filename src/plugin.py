@@ -1157,7 +1157,7 @@ class TMBD(Screen):
 			self.session.open(MessageBox, _("Write event to new eit-file:\n") + "%s\n" % (EITFILE) + _("%d bytes") % (ret), MessageBox.TYPE_INFO, timeout=3)
 
 	def Cutext(self, text):
-		if text > 0:
+		if isinstance(text, int) and text > 0:
 			return text[:179]
 		else:
 			return text
@@ -2404,7 +2404,7 @@ class KinoRu(Screen):
 			self.session.open(MessageBox, _("Write event to new eit-file:\n") + "%s\n" % (EITFILE) + _("%d bytes") % (ret), MessageBox.TYPE_INFO, timeout=3)
 
 	def Cutext(self, text):
-		if text > 0:
+		if isinstance(text, int) and text > 0:
 			return text[:179]
 		else:
 			return text
