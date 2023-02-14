@@ -30,7 +30,7 @@ from Screens.InputBox import InputBox
 from Components.ProgressBar import ProgressBar
 from Components.Language import language
 from Components.Sources.StaticText import StaticText
-from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigText, getConfigListEntry, ConfigSelection, ConfigInteger
+from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigText, ConfigSelection, ConfigInteger
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
@@ -1502,24 +1502,24 @@ class TMBDSettings(Screen, ConfigListScreen):
 			return res
 		self.TM_BD = config.plugins.tmbd
 		self.prev_values = getPrevValues(self.TM_BD)
-		self.cfg_addmenu = getConfigListEntry(_('Show \"TMBD Details: current event\" in extensions menu'), config.plugins.tmbd.add_ext_menu)
-		self.cfg_Event = getConfigListEntry(_("Event mode for search"), config.plugins.tmbd.ext_menu_event)
-		self.cfg_noevent = getConfigListEntry(_("Open plugin if there is no event"), config.plugins.tmbd.no_event)
-		self.cfg_locale = getConfigListEntry(_('Select the search language'), config.plugins.tmbd.locale)
-		self.cfg_available_languages = getConfigListEntry(_('Examples languages'), config.plugins.tmbd.available_languages)
-		self.cfg_alrernative_locale = getConfigListEntry(_('Alternative language for search'), config.plugins.tmbd.alrernative_locale)
-		self.cfg_hotkey = getConfigListEntry(_('\"TMBD Details: current event\" quick button'), config.plugins.tmbd.hotkey)
-		self.cfg_menu_profile = getConfigListEntry(_('Choice profile in search'), config.plugins.tmbd.menu_profile)
-		self.cfg_movielist_profile = getConfigListEntry(_('Profile movielist context menu'), config.plugins.tmbd.movielist_profile)
-		self.cfg_kinopoisk_data = getConfigListEntry(_('Data processing method for Kinopoisk.ru'), config.plugins.tmbd.kinopoisk_data)
-		self.cfg_yt_setup = getConfigListEntry(_('Open yt-trailer setup'), config.plugins.tmbd.yt_setup)
-		self.cfg_yt_event_menu = getConfigListEntry(_('Add yt-trailer to context menu EPG'), config.plugins.tmbd.yt_event_menu)
-		self.cfg_add_tmbd_to_nstreamvod = getConfigListEntry(_('Add \"search in TMBD\" Info/EPG Button to nStreamVOD'), config.plugins.tmbd.add_tmbd_to_nstreamvod)
-		self.cfg_add_vcs_to_nstreamvod = getConfigListEntry(_('Add \"open plugin VCS\" Info/EPG Button to nStreamVOD'), config.plugins.tmbd.add_vcs_to_nstreamvod)
+		self.cfg_addmenu = (_('Show \"TMBD Details: current event\" in extensions menu'), config.plugins.tmbd.add_ext_menu)
+		self.cfg_Event = (_("Event mode for search"), config.plugins.tmbd.ext_menu_event)
+		self.cfg_noevent = (_("Open plugin if there is no event"), config.plugins.tmbd.no_event)
+		self.cfg_locale = (_('Select the search language'), config.plugins.tmbd.locale)
+		self.cfg_available_languages = (_('Examples languages'), config.plugins.tmbd.available_languages)
+		self.cfg_alrernative_locale = (_('Alternative language for search'), config.plugins.tmbd.alrernative_locale)
+		self.cfg_hotkey = (_('\"TMBD Details: current event\" quick button'), config.plugins.tmbd.hotkey)
+		self.cfg_menu_profile = (_('Choice profile in search'), config.plugins.tmbd.menu_profile)
+		self.cfg_movielist_profile = (_('Profile movielist context menu'), config.plugins.tmbd.movielist_profile)
+		self.cfg_kinopoisk_data = (_('Data processing method for Kinopoisk.ru'), config.plugins.tmbd.kinopoisk_data)
+		self.cfg_yt_setup = (_('Open yt-trailer setup'), config.plugins.tmbd.yt_setup)
+		self.cfg_yt_event_menu = (_('Add yt-trailer to context menu EPG'), config.plugins.tmbd.yt_event_menu)
+		self.cfg_add_tmbd_to_nstreamvod = (_('Add \"search in TMBD\" Info/EPG Button to nStreamVOD'), config.plugins.tmbd.add_tmbd_to_nstreamvod)
+		self.cfg_add_vcs_to_nstreamvod = (_('Add \"open plugin VCS\" Info/EPG Button to nStreamVOD'), config.plugins.tmbd.add_vcs_to_nstreamvod)
 
 	def createSetup(self):
 		list = []
-		list.append(getConfigListEntry(_('Choice database to search'), config.plugins.tmbd.profile))
+		list.append((_('Choice database to search'), config.plugins.tmbd.profile))
 		if config.plugins.tmbd.profile.value == "0":
 			list.append(self.cfg_locale)
 			list.append(self.cfg_alrernative_locale)
@@ -1527,11 +1527,11 @@ class TMBDSettings(Screen, ConfigListScreen):
 		else:
 			list.append(self.cfg_kinopoisk_data)
 		if screenWidth >= 1280 and screenWidth < 1920:
-			list.append(getConfigListEntry(_('Select your skins'), config.plugins.tmbd.skins))
+			list.append((_('Select your skins'), config.plugins.tmbd.skins))
 		if epg_furtherOptions:
-			list.append(getConfigListEntry(_('Add \"Search event in TMBD\"  to event menu'), config.plugins.tmbd.show_in_furtheroptionsmenu))
-		list.append(getConfigListEntry(_('Open VirtualKeyBoard'), config.plugins.tmbd.virtual_text))
-		list.append(getConfigListEntry(_('Show plugin in channel selection context menu'), config.plugins.tmbd.menu))
+			list.append((_('Add \"Search event in TMBD\"  to event menu'), config.plugins.tmbd.show_in_furtheroptionsmenu))
+		list.append((_('Open VirtualKeyBoard'), config.plugins.tmbd.virtual_text))
+		list.append((_('Show plugin in channel selection context menu'), config.plugins.tmbd.menu))
 		if config.plugins.tmbd.menu.value:
 			list.append(self.cfg_menu_profile)
 		#list.append(self.cfg_hotkey)
@@ -1540,14 +1540,14 @@ class TMBDSettings(Screen, ConfigListScreen):
 			list.append(self.cfg_Event)
 			list.append(self.cfg_noevent)
 		list.append(self.cfg_movielist_profile)
-		list.append(getConfigListEntry(_('Check status Internet'), config.plugins.tmbd.test_connect))
-		list.append(getConfigListEntry(_('Show info for all types of movies'), config.plugins.tmbd.new_movieselect))
-		list.append(getConfigListEntry(_('Close plugin EXIT Button'), config.plugins.tmbd.exit_key))
+		list.append((_('Check status Internet'), config.plugins.tmbd.test_connect))
+		list.append((_('Show info for all types of movies'), config.plugins.tmbd.new_movieselect))
+		list.append((_('Close plugin EXIT Button'), config.plugins.tmbd.exit_key))
 		list.append(self.cfg_yt_setup)
 		list.append(self.cfg_yt_event_menu)
 		if config.plugins.tmbd.yt_event_menu.value != "0":
-			list.append(getConfigListEntry(_('Behavior after searching trailers'), config.plugins.tmbd.yt_start))
-		list.append(getConfigListEntry(_('Select folder for covers'), config.plugins.tmbd.cover_dir))
+			list.append((_('Behavior after searching trailers'), config.plugins.tmbd.yt_start))
+		list.append((_('Select folder for covers'), config.plugins.tmbd.cover_dir))
 		self["config"].list = list
 		self["config"].l.setList(list)
 
@@ -2837,8 +2837,8 @@ class MovielistPreviewPositionerCoordinateEdit(ConfigListScreen, Screen):
 		self.xEntry = ConfigInteger(default=x, limits=(0, w))
 		self.yEntry = ConfigInteger(default=y, limits=(0, h))
 		ConfigListScreen.__init__(self, [
-			getConfigListEntry("x position:", self.xEntry),
-			getConfigListEntry("y position:", self.yEntry)])
+			("x position:", self.xEntry),
+			("y position:", self.yEntry)])
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 			{
 				"green": self.ok,
