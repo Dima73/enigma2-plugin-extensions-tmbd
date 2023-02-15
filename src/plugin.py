@@ -1140,7 +1140,7 @@ class TMBD(Screen):
 				except:
 					pass
 			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
-			Extratext = self.Cutext(Extratext)
+			Extratext = Extratext[:179]
 			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 			sed = ShortEventDescriptor([])
@@ -1155,12 +1155,6 @@ class TMBD(Screen):
 			newEvent.setExtendedEventDescriptor(eed)
 			ret = newEvent.saveToFile(EITFILE)
 			self.session.open(MessageBox, _("Write event to new eit-file:\n") + "%s\n" % (EITFILE) + _("%d bytes") % (ret), MessageBox.TYPE_INFO, timeout=3)
-
-	def Cutext(self, text):
-		if text is not None:
-			return text[:179]
-		else:
-			return text
 
 	def removcurrent(self):
 		global name
@@ -2387,7 +2381,7 @@ class KinoRu(Screen):
 			if self.duplicated:
 				descrip += " %s %s\n" % (_("Roles duplicated:"), self.duplicated)
 			Extratext = Extratext.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
-			Extratext = self.Cutext(Extratext)
+			Extratext = Extratext[:179]
 			descrip = descrip.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 			namedetals = namedetals.replace('\xc2\xab', '"').replace('\xc2\xbb', '"').replace('\xe2\x80\xa6', '...').replace('\xe2\x80\x94', '-')
 			sed = ShortEventDescriptor([])
@@ -2402,12 +2396,6 @@ class KinoRu(Screen):
 			newEvent.setExtendedEventDescriptor(eed)
 			ret = newEvent.saveToFile(EITFILE)
 			self.session.open(MessageBox, _("Write event to new eit-file:\n") + "%s\n" % (EITFILE) + _("%d bytes") % (ret), MessageBox.TYPE_INFO, timeout=3)
-
-	def Cutext(self, text):
-		if text is not None:
-			return text[:179]
-		else:
-			return text
 
 	def removcurrent(self):
 		global name
