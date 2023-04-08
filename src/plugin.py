@@ -46,6 +46,7 @@ import array
 import struct
 import fcntl
 import shutil
+from six import PY2
 from socket import socket, AF_INET, SOCK_STREAM, SOCK_DGRAM, SHUT_RDWR
 from .event import Event, ShortEventDescriptor, ExtendedEventDescriptor
 from time import strftime, localtime, mktime
@@ -524,17 +525,28 @@ class TMBD(Screen):
 		self.testThread.start()
 
 	def get_iface_list(self):
-		names = array.array('B', '\0' * BYTES)
-		sck = socket(AF_INET, SOCK_DGRAM)
-		bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
-		sck.close()
-		namestr = names.tostring()
-		return [namestr[i:i + 32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
+		if PY2:
+			names = array.array('B', '\0' * BYTES)
+			sck = socket(AF_INET, SOCK_DGRAM)
+			bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
+			sck.close()
+			namestr = names.tostring()
+			return [namestr[i:i + 32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
+		else:
+			names = array.array('B', b'\0' * BYTES)
+			sck = socket(AF_INET, SOCK_DGRAM)
+			bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
+			sck.close()
+			namestr = names.tobytes()
+			return [namestr[i:i + 32].split(b'\0', 1)[0] for i in range(0, bytelen, 32)]
+
 
 	def test(self):
 		global testOK
 		link = "down"
 		for iface in self.get_iface_list():
+			if isinstance(iface, bytes):
+				iface = iface.decode("utf-8")
 			if "lo" in iface:
 				continue
 			if os.path.exists("/sys/class/net/%s/operstate" % (iface)):
@@ -582,7 +594,7 @@ class TMBD(Screen):
 			self.close()
 
 	def aboutAutor(self):
-		self.session.open(MessageBox, _("TMBD Details Plugin\nDeveloper: Nikolasi,vlamo,Dima73\n(c)2012"), MessageBox.TYPE_INFO)
+		self.session.open(MessageBox, _("TMBD Details Plugin\nDeveloper: Nikolasi,vlamo,Dima73\n(c)2012") + "-2023", MessageBox.TYPE_INFO)
 
 	def removCovers(self):
 		os.system('rm -rf /tmp/preview.jpg')
@@ -1438,11 +1450,11 @@ class KinopoiskConfiguration(Screen):
 
 	def run(self):
 		returnValue = self["menu"].l.getCurrentSelection() and self["menu"].l.getCurrentSelection()[1]
-		if returnValue is not None:
-			if returnValue is "all":
+		if returnValue != None:
+			if returnValue == "all":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoiskall.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
 				self.session.openWithCallback(self.restartGui, Console, _("Option for all images"), [cmd])
-			elif returnValue is "new":
+			elif returnValue == "new":
 				cmd = "cp /usr/lib/enigma2/python/Plugins/Extensions/TMBD/profile/kinopoisklmxl.py /usr/lib/enigma2/python/Plugins/Extensions/TMBD/kinopoisk.py && echo 'Done...\nTo apply the changes required restart GUI!' "
 				self.session.openWithCallback(self.restartGui, Console, _("Option only python 2.7 images"), [cmd])
 
@@ -1872,17 +1884,27 @@ class KinoRu(Screen):
 		self.testThread.start()
 
 	def get_iface_list(self):
-		names = array.array('B', '\0' * BYTES)
-		sck = socket(AF_INET, SOCK_DGRAM)
-		bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
-		sck.close()
-		namestr = names.tostring()
-		return [namestr[i:i + 32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
+		if PY2:
+			names = array.array('B', '\0' * BYTES)
+			sck = socket(AF_INET, SOCK_DGRAM)
+			bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
+			sck.close()
+			namestr = names.tostring()
+			return [namestr[i:i + 32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
+		else:
+			names = array.array('B', b'\0' * BYTES)
+			sck = socket(AF_INET, SOCK_DGRAM)
+			bytelen = struct.unpack('iL', fcntl.ioctl(sck.fileno(), SIOCGIFCONF, struct.pack('iL', BYTES, names.buffer_info()[0])))[0]
+			sck.close()
+			namestr = names.tobytes()
+			return [namestr[i:i + 32].split(b'\0', 1)[0] for i in range(0, bytelen, 32)]
 
 	def test(self):
 		global testOK
 		link = "down"
 		for iface in self.get_iface_list():
+			if isinstance(iface, bytes):
+				iface = iface.decode("utf-8")
 			if "lo" in iface:
 				continue
 			if os.path.exists("/sys/class/net/%s/operstate" % (iface)):
@@ -1933,7 +1955,7 @@ class KinoRu(Screen):
 			self.close()
 
 	def aboutAutor(self):
-		self.session.open(MessageBox, _("Kinopoisk.ru\nDeveloper: Dima73(Dimitrij) 2012/2014") + "\nNikolasi", MessageBox.TYPE_INFO)
+		self.session.open(MessageBox, _("Kinopoisk.ru\nDeveloper: Dima73(Dimitrij) 2012/2014") + "\nNikolasi" + "\nNo support at the moment!", MessageBox.TYPE_INFO)
 
 	def removCovers(self):
 		os.system('rm -rf /tmp/preview.jpg')
