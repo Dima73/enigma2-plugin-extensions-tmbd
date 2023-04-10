@@ -64,7 +64,7 @@ try:
 except ImportError:
 	SubsSupport = False
 
-plugin_version = "8.6"
+plugin_version = "8.7"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -115,7 +115,7 @@ TMBDInfoBarKeys = [
 
 def cutName(eventName=""):
 	if eventName:
-		eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('Х/ф', '').replace('.', '').replace(' | ', '')
+		eventName = eventName.replace('"', '').replace('Х/Ф', '').replace('М/Ф', '').replace('м/ф', '').replace('х/ф', '').replace('т/с', '').replace('м/с', '').replace('д/ф', '').replace('д/с', '').replace('.', '').replace(' | ', '')
 		eventName = eventName.replace('(18+)', '').replace('18+', '').replace('(16+)', '').replace('16+', '').replace('(12+)', '').replace('12+', '').replace('(7+)', '').replace('7+', '').replace('(6+)', '').replace('6+', '').replace('(0+)', '').replace('0+', '').replace('+', '')
 		return eventName
 	return ""
@@ -390,8 +390,8 @@ class TMBD(Screen):
 		<screen name="TMBD" position="135,135" size="1650,855" title="TMBD Details Plugin">
 		<eLabel backgroundColor="#00bbbbbb" position="0,0" size="1650,3" />
 		<widget font="Regular;33" name="title" position="30,30" size="1140,42" transparent="1" valign="center" />
-		<widget alphatest="blend" name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_empty.png" position="1185,15" size="315,31" zPosition="2" />
-		<widget name="stars" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" position="1185,15"  size="315,31" transparent="1" zPosition="3" />
+		<widget alphatest="blend" name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_empty.png" position="1185,15" size="210,21" zPosition="2" />
+		<widget name="stars" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TMBD/starsbar_filled.png" position="1185,15"  size="210,21" transparent="1" zPosition="3" />
 		<widget font="Regular;30" halign="left" name="ratinglabel" foregroundColor="#00f0b400" position="1185,51" size="315,34" transparent="1" />
 		<widget font="Regular;30" name="voteslabel" halign="left" position="1185,85" size="435,34" foregroundColor="#00f0b400" transparent="1" />
 		<widget alphatest="blend" name="poster" position="45,90" size="427,597" />
@@ -579,7 +579,11 @@ class TMBD(Screen):
 			self["title"].setText("")
 
 	def exit(self):
-		self.removCovers()
+		#self.removCovers()
+		try:
+			self.res.close()
+		except:
+			pass
 		self.close()
 
 	def exit2(self):
@@ -590,14 +594,18 @@ class TMBD(Screen):
 
 	def exitConfirmed(self, answer):
 		if answer:
-			self.removCovers()
+			#self.removCovers()
+			try:
+				self.res.close()
+			except:
+				pass
 			self.close()
 
 	def aboutAutor(self):
 		self.session.open(MessageBox, _("TMBD Details Plugin\nDeveloper: Nikolasi,vlamo,Dima73\n(c)2012") + "-2023", MessageBox.TYPE_INFO)
 
 	def removCovers(self):
-		os.system('rm -rf /tmp/preview.jpg')
+		os.system('[ -x /tmp/preview.jpg ] && /rm -rf /tmp/preview.jpg')
 
 	def resetLabels(self):
 		try:
@@ -682,6 +690,10 @@ class TMBD(Screen):
 			current = self["menu"].l.getCurrentSelection()
 		except:
 			return
+		try:
+			self.res.close()
+		except:
+			pass
 		if current and self.curResult:
 			try:
 				movie = current[1]
@@ -692,10 +704,27 @@ class TMBD(Screen):
 					if image is not None:
 						cover_url = image.geturl()
 					if cover_url:
-						urllib.request.urlretrieve(cover_url, jpg_file)
+						self.refreshTimer.stop()
+						#urllib.request.urlretrieve(cover_url, jpg_file)
+						user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'
+						req = urllib.request.Request(cover_url, headers={'User-agent': user_agent, 'Accept': 'text/html'})
+						try:
+							res = urllib.request.urlopen(req, timeout=7)
+							self.res = res
+						except:
+							print('The server couldn\'t fulfill the request.')
+							res = None
+						if res != None:
+							page = res.read()
+							if PY2:
+								file = open(jpg_file, 'w')
+							else:
+								file = open(jpg_file, 'wb')
+							file.write(page)
+							file.close()
+							self.refreshTimer.start(300, True)
 				except:
 					pass
-				self.refreshTimer.start(100, True)
 				Casttext = ""
 				try:
 					name = movie.title
@@ -2207,13 +2236,16 @@ class KinoRu(Screen):
 			user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.53.11 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10'
 			req = urllib.request.Request(url, headers={'User-agent': user_agent, 'Accept': 'text/html'})
 			try:
-				res = urllib.request.urlopen(req)
+				res = urllib.request.urlopen(req, timeout=7)
 			except:
 				print('The server couldn\'t fulfill the request.')
 				res = None
 			if res != None:
 				page = res.read()
-				file = open('/tmp/preview.jpg', 'w')
+				if PY2:
+					file = open('/tmp/preview.jpg', 'w')
+				else:
+					file = open('/tmp/preview.jpg', 'wb')
 				file.write(page)
 				file.close()
 				self["kino"].hide()
