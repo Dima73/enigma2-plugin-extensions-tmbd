@@ -544,7 +544,6 @@ class TMBD(Screen):
 			namestr = names.tobytes()
 			return [namestr[i:i + 32].split(b'\0', 1)[0] for i in range(0, bytelen, 32)]
 
-
 	def test(self):
 		global testOK
 		link = "down"

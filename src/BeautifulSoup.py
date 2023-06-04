@@ -78,7 +78,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE, DAMMIT.
 """
 
 
-
 __author__ = "Leonard Richardson (leonardr@segfault.org)"
 __version__ = "3.1.0.1"
 __copyright__ = "Copyright (c) 2004-2009 Leonard Richardson"

@@ -1,8 +1,6 @@
 # This code comes from youtube-dl: https://github.com/rg3/youtube-dl/blob/master/youtube_dl/swfinterp.py
 
 
-
-
 import collections
 import io
 import struct
