@@ -1272,7 +1272,7 @@ class BeautifulStoneSoup(Tag):
                 # Python installations can't copy regexes. If anyone
                 # was relying on the existence of markupMassage, this
                 # might cause problems.
-                del(self.markupMassage)
+                del (self.markupMassage)
         self.builder.reset()
 
         self.builder.feed(markup)
@@ -1833,7 +1833,7 @@ class UnicodeDammit:
 
         # Convert smart quotes to HTML if coming from an encoding
         # that might have them.
-        if self.smartQuotesTo and proposed.lower() in("windows-1252",
+        if self.smartQuotesTo and proposed.lower() in ("windows-1252",
                                                       "iso-8859-1",
                                                       "iso-8859-2"):
             smart_quotes_re = "([\x80-\x9f])"
