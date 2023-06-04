@@ -14,7 +14,9 @@ from .locales import get_locale
 from .cache import Cache
 
 from urllib.parse import urlencode
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 import json
 import os
 

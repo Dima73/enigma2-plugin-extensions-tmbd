@@ -78,7 +78,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE, DAMMIT.
 """
 
 
-
 __author__ = "Leonard Richardson (leonardr@segfault.org)"
 __version__ = "3.1.0.1"
 __copyright__ = "Copyright (c) 2004-2009 Leonard Richardson"
@@ -931,7 +930,7 @@ class SoupStrainer:
             if self._matches(markup, self.text):
                 found = markup
         else:
-            raise Exception("I don't know how to match against a %s" \
+            raise Exception("I don't know how to match against a %s"
                   % markup.__class__)
         return found
 
@@ -1272,7 +1271,7 @@ class BeautifulStoneSoup(Tag):
                 # Python installations can't copy regexes. If anyone
                 # was relying on the existence of markupMassage, this
                 # might cause problems.
-                del(self.markupMassage)
+                del (self.markupMassage)
         self.builder.reset()
 
         self.builder.feed(markup)
@@ -1833,7 +1832,7 @@ class UnicodeDammit:
 
         # Convert smart quotes to HTML if coming from an encoding
         # that might have them.
-        if self.smartQuotesTo and proposed.lower() in("windows-1252",
+        if self.smartQuotesTo and proposed.lower() in ("windows-1252",
                                                       "iso-8859-1",
                                                       "iso-8859-2"):
             smart_quotes_re = "([\x80-\x9f])"
