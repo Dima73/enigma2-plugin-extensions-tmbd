@@ -41,7 +41,9 @@ import re
 import gettext
 import random
 from . import tmdb
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 import array
 import struct
 import fcntl
@@ -53,7 +55,9 @@ from time import strftime, localtime, mktime
 from Screens.Standby import TryQuitMainloop
 from .meta import MetaParser, getctime, fileSize
 from . import kinopoisk
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 from . import tmbdYTTrailer
 
 try:

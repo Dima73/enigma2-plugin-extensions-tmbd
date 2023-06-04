@@ -5,12 +5,18 @@ import re
 from urllib.request import Request, urlopen as urlopen2
 from urllib.error import URLError, HTTPError
 from urllib.parse import quote as urllib2_quote, unquote as urllib2_unquote
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 from socket import gaierror, error
 import http.client
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 import re
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 import string
 import time
 import os
