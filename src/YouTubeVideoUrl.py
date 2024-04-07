@@ -164,10 +164,11 @@ class YouTubeVideoUrl():
 
 	def _extract_player_response(self, video_id):
 		url = 'https://www.youtube.com/youtubei/v1/player?key=AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w&bpctr=9999999999&has_verified=1'
-		USER_AGENT = 'com.google.android.youtube/17.31.35 (Linux; U; Android 12) gzip'
+		ANDROID = '18.48.37'
+		USER_AGENT = 'com.google.android.youtube/%s(Linux; U; Android 13; en_US; sdk_gphone64_x86_64 Build/UPB4.230623.005) gzip' % ANDROID
 		data = {
 			'videoId': video_id,
-			'params': 'CgIQBg',
+			'params': 'CgIIAQ==',
 			'playbackContext': {
 				'contentPlaybackContext': {
 					'html5Preference': 'HTML5_PREF_WANTS'
@@ -176,11 +177,11 @@ class YouTubeVideoUrl():
 			'context': {
 				'client': {
 					'hl': 'en',
-					'clientVersion': '17.31.35',
-					'androidSdkVersion': 31,
+					'clientVersion': ANDROID,
+					'androidSdkVersion': 33,
 					'clientName': 'ANDROID',
 					'osName': 'Android',
-					'osVersion': '12',
+					'osVersion': '13',
 					'userAgent': USER_AGENT
 				}
 			}
@@ -189,7 +190,7 @@ class YouTubeVideoUrl():
 			'content-type': 'application/json',
 			'Origin': 'https://www.youtube.com',
 			'X-YouTube-Client-Name': 3,
-			'X-YouTube-Client-Version': '17.31.35',
+			'X-YouTube-Client-Version': ANDROID,
 			'User-Agent': USER_AGENT
 		}
 		try:
