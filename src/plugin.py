@@ -1551,7 +1551,7 @@ class TMBDSettings(Screen, ConfigListScreen):
 		self["config"].l.setList(list)
 
 	def keyOK(self):
-		ConfigListScreen.keyOK(self)
+		#ConfigListScreen.keyOK(self)
 		sel = self["config"].getCurrent() and self["config"].getCurrent()[1]
 		if not sel:
 			return
