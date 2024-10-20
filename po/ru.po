@@ -665,3 +665,9 @@ msgstr "Выполнить рестарт GUI сейчас?"
 
 msgid " as alternative language"
 msgstr " как альтернативный язык"
+
+msgid "Use DASH MP4 format"
+msgstr "Использовать DASH MP4 формат"
+
+msgid "Use DASH MP4 format when this need."
+msgstr "Использовать DASH MP4 формат при необходимости."

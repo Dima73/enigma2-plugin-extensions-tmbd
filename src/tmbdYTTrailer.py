@@ -1,9 +1,19 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from sys import version_info
 
 import os
 
+if version_info[0] == 2:
+	# Python 2
+	from urllib import quote
+	from urllib2 import urlopen
+else:
+	from urllib.parse import quote
+	from urllib.request import urlopen
+
+
 from json import load
-from urllib.parse import quote
-from urllib.request import urlopen
 from twisted.web.client import downloadPage
 
 from enigma import ePicLoad, eTimer, eServiceReference
@@ -34,6 +44,7 @@ config.plugins.tmbd_yttrailer.ext_descr = ConfigText(default='', fixed_size=Fals
 config.plugins.tmbd_yttrailer.max_results = ConfigInteger(5, limits=(1, 10))
 config.plugins.tmbd_yttrailer.close_player_with_exit = ConfigYesNo(False)
 config.plugins.tmbd_yttrailer.search = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
+config.plugins.tmbd_yttrailer.useDashMP4 = ConfigYesNo(default=True)
 
 
 from .YouTubeVideoUrl import YouTubeVideoUrl
@@ -360,6 +371,9 @@ class TmbdYTTrailerSetup(ConfigListScreen, Screen):
 		configlist.append((_("Close Player with exit-key"),
 			config.plugins.tmbd_yttrailer.close_player_with_exit,
 			_('When not enabled, Player close with only stop key.')))
+		configlist.append((_("Use DASH MP4 format"),
+			config.plugins.tmbd_yttrailer.useDashMP4,
+			_('Use DASH MP4 format when this need.')))
 		configlist.append((_("Manual search"),
 			config.plugins.tmbd_yttrailer.search,
 			_('Press OK for manual search YT-Trailer.')))
