@@ -22,6 +22,8 @@
 
 # 8859-x to ucs-16 coding tables. taken from www.unicode.org/Public/MAPPINGS/ISO8859/
 
+from six import PY2
+
 c88592 = [
 0x00A0, 0x0104, 0x02D8, 0x0141, 0x00A4, 0x013D, 0x015A, 0x00A7, 0x00A8, 0x0160, 0x015E, 0x0164, 0x0179, 0x00AD, 0x017D, 0x017B,
 0x00B0, 0x0105, 0x02DB, 0x0142, 0x00B4, 0x013E, 0x015B, 0x02C7, 0x00B8, 0x0161, 0x015F, 0x0165, 0x017A, 0x02DD, 0x017E, 0x017C,
@@ -261,7 +263,10 @@ def convertDVBUTF8(data, length, table=None):
 		print("convertDVBUTF8(): reserved %d" % (data[0]))
 		i += 1
 
-	res = [0] * 2048
+	if PY2:
+		res = [0] * 2048
+	else:
+		res = []
 	while (i < length):
 		code = 0
 		if (table == 65): # unicode
@@ -275,79 +280,152 @@ def convertDVBUTF8(data, length, table=None):
 			continue
 		# Unicode->UTF8 encoding
 		if (code < 0x80):	# identity ascii <-> utf8 mapping
-			res[t] = chr(code)
+			if PY2:
+				res[t] = chr(code)
+			else:
+				res.append(chr(code))
 			t += 1
 		elif (code < 0x800):	# two byte mapping
-			res[t + 0] = chr((code >> 6) | 0xC0)
-			res[t + 1] = chr((code & 0x3F) | 0x80)
+			if PY2:
+				res[t + 0] = chr((code >> 6) | 0xC0)
+				res[t + 1] = chr((code & 0x3F) | 0x80)
+			else:
+				res.append(chr((code >> 6) | 0xC0))
+				res.append(chr((code & 0x3F) | 0x80))
 			t += 2
 		elif (code < 0x10000):	# three bytes mapping
-			res[t + 0] = chr((code >> 12) | 0xE0)
-			res[t + 1] = chr(((code >> 6) & 0x3F) | 0x80)
-			res[t + 2] = chr((code & 0x3F) | 0x80)
+			if PY2:
+				res[t + 0] = chr((code >> 12) | 0xE0)
+				res[t + 1] = chr(((code >> 6) & 0x3F) | 0x80)
+				res[t + 2] = chr((code & 0x3F) | 0x80)
+			else:
+				res.append(chr((code >> 12) | 0xE0))
+				res.append(chr(((code >> 6) & 0x3F) | 0x80))
+				res.append(chr((code & 0x3F) | 0x80))
 			t += 3
 		else:
-			res[t + 0] = chr((code >> 18) | 0xF0)
-			res[t + 1] = chr(((code >> 12) & 0x3F) | 0x80)
-			res[t + 2] = chr(((code >> 6) & 0x3F) | 0x80)
-			res[t + 3] = chr((code & 0x3F) | 0x80)
+			if PY2:
+				res[t + 0] = chr((code >> 18) | 0xF0)
+				res[t + 1] = chr(((code >> 12) & 0x3F) | 0x80)
+				res[t + 2] = chr(((code >> 6) & 0x3F) | 0x80)
+				res[t + 3] = chr((code & 0x3F) | 0x80)
+			else:
+				res.append(chr((code >> 18) | 0xF0))
+				res.append(chr(((code >> 12) & 0x3F) | 0x80))
+				res.append(chr(((code >> 6) & 0x3F) | 0x80))
+				res.append(chr((code & 0x3F) | 0x80))
 			t += 4
 		if (t + 4 > 2047):
 			print("convertDVBUTF8():  buffer to small.. break now")
 			break
-	return ''.join([x for x in res if x != 0])
+	if PY2:
+		return ''.join([x for x in res if x != 0])
+	else:
+		return ''.join(res)
 
 
 def convertUTF8DVB(string, table):
-	res = ''
-	coding_table = None
-	i = 0
-	length = len(string)
+	if PY2:
+		res = ''
+		coding_table = None
+		i = 0
+		length = len(string)
 
-	while i < length:
-		c2 = 0
-		c1 = ord(string[i])
-		if c1 < 0x80:
-			c = c1
-		else:
-			i += 1
-			if i >= length:
-				break
-			c2 = ord(string[i])
-			c = ((c1 & 0x3F) << 6) + (c2 & 0x3F)
-			if table in (0, 1) or (c1 < 0xA0):
-				pass
+		while i < length:
+			c2 = 0
+			c1 = ord(string[i])
+			if c1 < 0x80:
+				c = c1
 			else:
-				if coding_table is None:
-					if isinstance(table, str):
-						for j in range(17):
-							if table in LANGUAGES[j]:
-								table = j
+				i += 1
+				if i >= length:
+					break
+				c2 = ord(string[i])
+				c = ((c1 & 0x3F) << 6) + (c2 & 0x3F)
+				if table in (0, 1) or (c1 < 0xA0):
+					pass
+				else:
+					if coding_table is None:
+						if isinstance(table, str):
+							for j in range(17):
+								if table in LANGUAGES[j]:
+									table = j
+									break
+						if table in range(2, 17) and table != 12:
+							coding_table = eval('c8859%d' % (table))
+						else:
+							print("unknown coding table:", table)
+							coding_table = 0
+					if coding_table:
+						for j in range(96):
+							if coding_table[j] == c:
+								c = 0xA0 + j
 								break
+			try:
+				res += chr(c)
+			except Exception as e:
+				#fd = open('/tmp/dvbstring.log', 'a+');
+				#print>>fd, 'convertUTF8DVB(): error: %s (c [c1,c2]= 0x%x [0x%02x, 0x%02x]; index/length = %d/%d)' % (e, c, c1, c2, i, length-1);
+				print('convertUTF8DVB - error:', e)
+			i += 1
+		if res:
+			if table in (1, 2, 3, 4, 16):
+				pref = '\20\0' + chr(table)
+			elif table in range(5, 16):
+				pref = chr(table - 4)
+			else:
+				pref = '\0'
+		else:
+			pref = ''
+		return pref, res
+	else:
+		res = []
+		coding_table = None
+
+		# Convert table name (e.g., "rus") to numeric index
+		if isinstance(table, str):
+			for j in range(17):
+				if table in LANGUAGES[j]:
+					table = j
+					break
+
+		# Process each Unicode character in the input string
+		for ch in string:
+			code = ord(ch)
+
+			# Apply DVB recoding only if character code is >= 0xA0
+			if code >= 0xA0:
+				# Load coding table only once (if needed)
+				if coding_table is None:
 					if table in range(2, 17) and table != 12:
-						coding_table = eval('c8859%d' % (table))
+						coding_table = globals().get('c8859%d' % table)
+						if coding_table is None:
+							print("unknown coding table:", table)
+							coding_table = 0
 					else:
-						print("unknown coding table:", table)
 						coding_table = 0
+
+				# If a valid coding table is found, try to recode
 				if coding_table:
 					for j in range(96):
-						if coding_table[j] == c:
-							c = 0xA0 + j
+						if coding_table[j] == code:
+							code = 0xA0 + j
 							break
-		try:
-			res += chr(c)
-		except Exception as e:
-			#fd = open('/tmp/dvbstring.log', 'a+');
-			#print>>fd, 'convertUTF8DVB(): error: %s (c [c1,c2]= 0x%x [0x%02x, 0x%02x]; index/length = %d/%d)' % (e, c, c1, c2, i, length-1);
-			print('error')
-		i += 1
-	if res:
-		if table in (1, 2, 3, 4, 16):
-			pref = '\20\0' + chr(table)
-		elif table in range(5, 16):
-			pref = chr(table - 4)
+
+			try:
+				res.append(chr(code))
+			except Exception as e:
+				print('convertUTF8DVB - error:', e)
+
+		# Add DVB character table prefix
+		if res:
+			if table in (1, 2, 3, 4, 16):
+				prefix = '\x14\x00' + chr(table)
+			elif table in range(5, 16):
+				prefix = chr(table - 4)
+			else:
+				prefix = '\x00'
 		else:
-			pref = '\0'
-	else:
-		pref = ''
-	return pref, res
+			prefix = ''
+
+		return prefix, ''.join(res)

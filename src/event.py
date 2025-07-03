@@ -22,6 +22,7 @@
 
 import array
 import time
+from six import PY2
 from .dvbstring import convertDVBUTF8, convertUTF8DVB
 
 
@@ -227,20 +228,29 @@ class Event:
 			textlen = len(text)
 			length = 5 + namelen + textlen			# max. length == 253 (or 255???)
 
-			sbuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
+			if PY2:
+				sbuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
+			else:
+				sbuf = array.array('B', b'\0' * (length + 2))	# +2 for tag and length bytes
 			sbuf[0] = self.EIT_SHORT_EVENT_DESCRIPTOR
 			sbuf[1] = length
 			for i in range(2, 5):
-				sbuf[i] = ord(lang[i - 2])
+				num = ord(lang[i - 2])
+				if num >= 0 and num <= 255:
+					sbuf[i] = num
 			sbuf[5] = namelen
 			if namelen:
 				for i in range(6, 6 + namelen):
-					sbuf[i] = ord(name[i - 6])
+					num = ord(name[i - 6])
+					if num >= 0 and num <= 255:
+						sbuf[i] = num
 			sbuf[6 + namelen] = textlen
 			if textlen:
 				sbuf[7 + namelen] = 1
 				for i in range(7 + namelen, 7 + namelen + textlen):
-					sbuf[i] = ord(text[i - 7 - namelen])
+					num = ord(text[i - 7 - namelen])
+					if num >= 0 and num <= 255:
+						sbuf[i] = num
 			buffer.extend(sbuf)
 			descriptorsLoopLength += length + 2
 
@@ -251,7 +261,10 @@ class Event:
 			textlen = min(self.MAX_DESCRIPTOR_LOOP_LENGTH, len(text))
 			tablelen = len(table)
 			MAX_LEN = 247 - tablelen	# may be '249-tablelen'???
-			lastDescriptorNumber = (textlen + MAX_LEN - 1) / MAX_LEN - 1
+			if PY2:
+				lastDescriptorNumber = (textlen + MAX_LEN - 1) / MAX_LEN - 1
+			else:
+				lastDescriptorNumber = (textlen + MAX_LEN - 1) // MAX_LEN - 1
 			remainingTextLength = textlen - lastDescriptorNumber * MAX_LEN
 			while (lastDescriptorNumber + 1) * 256 + descriptorsLoopLength > self.MAX_DESCRIPTOR_LOOP_LENGTH:
 				lastDescriptorNumber -= 1
@@ -263,17 +276,24 @@ class Event:
 				curtext = table + text[descrIndex * MAX_LEN:descrIndex * MAX_LEN + curtextlen]
 				length = 6 + itemlen + curtextlen + tablelen	# max. length == 253 (or 255???)
 
-				ebuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
+				if PY2:
+					ebuf = array.array('B', '\0' * (length + 2))	# +2 for tag and length bytes
+				else:
+					ebuf = array.array('B', b'\0' * (length + 2))	# +2 for tag and length bytes
 				ebuf[0] = self.EIT_EXTENDED_EVENT_DESCRIPTOR
 				ebuf[1] = length
 				ebuf[2] = (descrIndex << 4) | lastDescriptorNumber
 				for i in range(3, 6):
-					ebuf[i] = ord(lang[i - 3])
+					num = ord(lang[i - 3])
+					if num >= 0 and num <= 255:
+						ebuf[i] = num
 				ebuf[6] = itemlen
 				ebuf[7 + itemlen] = curtextlen + tablelen
 				if curtextlen:
 					for i in range(8 + itemlen, 8 + itemlen + curtextlen + tablelen):
-						ebuf[i] = ord(curtext[i - 8 - itemlen])
+						num = ord(curtext[i - 8 - itemlen])
+						if num >= 0 and num <= 255:
+							ebuf[i] = num
 
 				buffer.extend(ebuf)
 				descriptorsLoopLength += length + 2
@@ -286,7 +306,10 @@ class Event:
 	def readFromFile(self, filename):
 		buffer = None
 		try:
-			buffer = array.array('B', open(filename, 'rb').read())
+			if PY2:
+				buffer = array.array('B', open(filename, 'rb').read())
+			else:
+				buffer = array.array('B', open(filename, 'rb').read())
 			self.__readFromBuffer(buffer)
 		except:
 			import traceback
@@ -297,10 +320,16 @@ class Event:
 
 	def saveToFile(self, filename):
 		try:
-			buffer = array.array('B', '\0' * 12)
+			if PY2:
+				buffer = array.array('B', '\0' * 12)
+			else:
+				buffer = array.array('B', b'\0' * 12)
 			self.__saveToBuffer(buffer)
 			res = buffer.buffer_info()[1]
-			fd = open(filename, 'wb')
+			if PY2:
+				fd = open(filename, 'w')
+			else:
+				fd = open(filename, 'wb')
 			buffer.tofile(fd)
 			fd.flush()
 			fd.close()

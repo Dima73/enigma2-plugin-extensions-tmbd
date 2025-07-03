@@ -671,3 +671,6 @@ msgstr "Использовать DASH MP4 формат"
 
 msgid "Use DASH MP4 format when this need."
 msgstr "Использовать DASH MP4 формат при необходимости."
+
+msgid "Remove current poster and info for:\n%s ?"
+msgstr "Удалить текущий постер и информацию для:\n%s ?"

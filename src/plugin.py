@@ -67,7 +67,7 @@ try:
 except ImportError:
 	SubsSupport = False
 
-plugin_version = "8.7"
+plugin_version = "8.8"
 
 epg_furtherOptions = False
 if hasattr(EPGSelection, "furtherOptions"):
@@ -181,9 +181,14 @@ def new_SelectionEventInfo_updateEventInfo(self):
 	if config.plugins.tmbd.new_movieselect.value:
 		if serviceref and serviceref.type == eServiceReference.idUser + 1:
 			pathname = serviceref.getPath()
-			if len(pathname) > 2 and os.path.exists(pathname[:-2] + 'eit'):
-				serviceref = eServiceReference(serviceref.toString())
-				serviceref.type = eServiceReference.idDVB
+			if pathname and len(pathname) > 2:
+				try:
+					n = len(pathname.split('.')[len(pathname.split('.')) - 1])
+				except:
+					n = 0
+				if n > 0 and os.path.exists(pathname[:-n] + 'eit'):
+					serviceref = eServiceReference(serviceref.toString())
+					serviceref.type = eServiceReference.idDVB
 	self["Service"].newService(serviceref)
 
 
@@ -197,11 +202,19 @@ def new_MovieSelection_showEventInformation(self):
 		if l is not None:
 			serviceref = l[0]
 			pathname = serviceref and serviceref.getPath() or ''
-			if len(pathname) > 2 and os.path.exists(pathname[:-2] + 'eit'):
-				serviceref = eServiceReference(serviceref.toString())
-				serviceref.type = eServiceReference.idDVB
-				info = eServiceCenter.getInstance().info(serviceref)
-				evt = info and info.getEvent(serviceref)
+			if pathname and len(pathname) > 2:
+				try:
+					n = len(pathname.split('.')[len(pathname.split('.')) - 1])
+				except:
+					n = 0
+				if n > 0 and os.path.exists(pathname[:-n] + 'eit'):
+					serviceref = eServiceReference(serviceref.toString())
+					serviceref.type = eServiceReference.idDVB
+					try:
+						info = eServiceCenter.getInstance().info(serviceref)
+					except:
+						info = None
+					evt = info and info.getEvent(serviceref)
 	if evt:
 		self.session.open(EventViewSimple, evt, ServiceReference(self.getCurrent()))
 
@@ -1066,17 +1079,20 @@ class TMBD(Screen):
 				metaParser = MetaParser()
 				metaParser.name = namedetals2
 				metaParser.description = Extratext2
-				if os.path.exists(TSFILE + '.meta') and movie2.endswith(".ts"):
-					readmetafile = open("%s.meta" % (movie2), "r")
-					linecnt = 0
-					line = readmetafile.readline()
-					if line:
-						line = line.strip()
-						if linecnt == 0:
-							metaParser.ref = eServiceReference(line)
+				if os.path.exists(TSFILE + '.meta') and (movie2.endswith(".ts") or movie2.endswith(".stream")):
+					if os.path.exists(movie2 + '.meta'):
+						readmetafile = open("%s.meta" % (movie2), "r")
+						linecnt = 0
+						line = readmetafile.readline()
+						if line:
+							line = line.strip()
+							if linecnt == 0:
+								metaParser.ref = eServiceReference(line)
+						else:
+							metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
+						readmetafile.close()
 					else:
 						metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
-					readmetafile.close()
 				else:
 					metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
 				metaParser.time_create = getctime(TSFILE)
@@ -1106,7 +1122,14 @@ class TMBD(Screen):
 		Extratext = ""
 		namedetals = ""
 		if len(movie2):
-				EITFILE = movie2[:-2] + 'eit'
+			try:
+				n = len(movie2.split('.')[len(movie2.split('.')) - 1])
+			except:
+				n = 0
+			if n > 0:# and os.path.exists(movie2[:-n] + 'eit'):
+				EITFILE = movie2[:-n] + 'eit'
+			else:
+				return
 		else:
 			return
 		current = self["menu"].l.getCurrentSelection()
@@ -1207,7 +1230,7 @@ class TMBD(Screen):
 		global movie2, name
 		if len(movie2):
 			dir_cover = config.plugins.tmbd.cover_dir.value + 'covers/'
-			if movie2.endswith(".ts"):
+			if movie2.endswith(".ts") or movie2.endswith(".stream"):
 				if os.path.exists(movie2 + '.meta'):
 					try:
 						readmetafile = open("%s.meta" % (movie2), "r")
@@ -1215,7 +1238,7 @@ class TMBD(Screen):
 						name_cover = name_cur + '.jpg'
 					except:
 						name_cover = ""
-					readmetafile.close()
+						readmetafile.close()
 				else:
 					name_cover = name + '.jpg'
 			else:
@@ -1231,8 +1254,14 @@ class TMBD(Screen):
 	def removcurrentinfo(self):
 		global movie2, name
 		if len(movie2):
-			remove_eit = movie2[:-2] + 'eit'
-			if os.path.exists(remove_eit):
+			remove_eit = ''
+			try:
+				n = len(movie2.split('.')[len(movie2.split('.')) - 1])
+			except:
+				n = 0
+			if n > 0 and os.path.exists(movie2[:-n] + 'eit'):
+				remove_eit = movie2[:-n] + 'eit'
+			if remove_eit and os.path.exists(remove_eit):
 				try:
 					os.remove(remove_eit)
 					self.session.open(MessageBox, _("%s eit-file removed!") % (remove_eit), MessageBox.TYPE_INFO, timeout=3)
@@ -1252,15 +1281,21 @@ class TMBD(Screen):
 		else:
 			global movie2, name
 			if len(movie2):
+				remove_eit = ''
 				dir_cover = config.plugins.tmbd.cover_dir.value + 'covers/'
-				remove_eit = movie2[:-2] + 'eit'
-				if os.path.exists(remove_eit):
+				try:
+					n = len(movie2.split('.')[len(movie2.split('.')) - 1])
+				except:
+					n = 0
+				if n > 0 and os.path.exists(movie2[:-n] + 'eit'):
+					remove_eit = movie2[:-n] + 'eit'
+				if remove_eit and os.path.exists(remove_eit):
 					try:
 						os.remove(remove_eit)
 						self.session.open(MessageBox, _("%s eit-file removed!") % (remove_eit), MessageBox.TYPE_INFO, timeout=3)
 					except:
 						pass
-				if movie2.endswith(".ts"):
+				if movie2.endswith(".ts") or movie2.endswith(".stream"):
 					if os.path.exists(movie2 + '.meta'):
 						try:
 							readmetafile = open("%s.meta" % (movie2), "r")
@@ -2378,20 +2413,24 @@ class KinoRu(Screen):
 				metaParser = MetaParser()
 				metaParser.name = namedetals2
 				metaParser.description = Extratext2
-				if os.path.exists(TSFILE + '.meta') and movie2.endswith(".ts"):
-					readmetafile = open("%s.meta" % (movie2), "r")
-					linecnt = 0
-					line = readmetafile.readline()
-					if line:
-						line = line.strip()
-						if linecnt == 0:
-							metaParser.ref = eServiceReference(line)
+				if os.path.exists(TSFILE + '.meta') and (movie2.endswith(".ts") or movie2.endswith(".stream")):
+					if os.path.exists(movie2 + '.meta'):
+						readmetafile = open("%s.meta" % (movie2), "r")
+						linecnt = 0
+						line = readmetafile.readline()
+						if line:
+							line = line.strip()
+							if linecnt == 0:
+								metaParser.ref = eServiceReference(line)
+						else:
+							metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
+						readmetafile.close()
 					else:
 						metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
-					readmetafile.close()
 				else:
 					metaParser.ref = eServiceReference('1:0:0:0:0:0:0:0:0:0:')
 				metaParser.time_create = getctime(TSFILE)
+				metaParser.tags = ''
 				metaParser.tags = ''
 				metaParser.length = 0
 				metaParser.filesize = fileSize(TSFILE)
@@ -2409,7 +2448,14 @@ class KinoRu(Screen):
 		Extratext = ""
 		namedetals = ""
 		if len(movie2):
-			EITFILE = movie2[:-2] + 'eit'
+			try:
+				n = len(movie2.split('.')[len(movie2.split('.')) - 1])
+			except:
+				n = 0
+			if n > 0:# and os.path.exists(movie2[:-n] + 'eit'):
+				EITFILE = movie2[:-n] + 'eit'
+			else:
+				return
 		else:
 			return
 		current = self["menu"].l.getCurrentSelection()
@@ -2461,7 +2507,7 @@ class KinoRu(Screen):
 		global movie2, name
 		if len(movie2):
 			dir_cover = config.plugins.tmbd.cover_dir.value + 'covers/'
-			if movie2.endswith(".ts"):
+			if movie2.endswith(".ts") or movie2.endswith(".stream"):
 				if os.path.exists(movie2 + '.meta'):
 					try:
 						readmetafile = open("%s.meta" % (movie2), "r")
@@ -2469,7 +2515,7 @@ class KinoRu(Screen):
 						name_cover = name_cur + '.jpg'
 					except:
 						name_cover = ""
-					readmetafile.close()
+						readmetafile.close()
 				else:
 					name_cover = name + '.jpg'
 			else:
@@ -2485,8 +2531,14 @@ class KinoRu(Screen):
 	def removcurrentinfo(self):
 		global movie2, name
 		if len(movie2):
-			remove_eit = movie2[:-2] + 'eit'
-			if os.path.exists(remove_eit):
+			remove_eit = ''
+			try:
+				n = len(movie2.split('.')[len(movie2.split('.')) - 1])
+			except:
+				n = 0
+			if n > 0 and os.path.exists(movie2[:-n] + 'eit'):
+				remove_eit = movie2[:-n] + 'eit'
+			if remove_eit and os.path.exists(remove_eit):
 				try:
 					os.remove(remove_eit)
 					self.session.open(MessageBox, _("%s eit-file removed!") % (remove_eit), MessageBox.TYPE_INFO, timeout=3)
@@ -2514,7 +2566,7 @@ class KinoRu(Screen):
 						self.session.open(MessageBox, _("%s eit-file removed!") % (remove_eit), MessageBox.TYPE_INFO, timeout=3)
 					except:
 						pass
-				if movie2.endswith(".ts"):
+				if movie2.endswith(".ts") or movie2.endswith(".stream"):
 					if os.path.exists(movie2 + '.meta'):
 						try:
 							readmetafile = open("%s.meta" % (movie2), "r")
@@ -2522,7 +2574,7 @@ class KinoRu(Screen):
 							name_cover = name_cur + '.jpg'
 						except:
 							name_cover = ""
-						readmetafile.close()
+							readmetafile.close()
 					else:
 						name_cover = name + '.jpg'
 				else:
@@ -2802,7 +2854,7 @@ class MovielistPreview():
 		if not self.working:
 			if movie and self.mayShow and config.plugins.tmbd.enabled.value:
 				png2 = os.path.split(movie)[1]
-				if movie.endswith(".ts"):
+				if movie.endswith(".ts") or movie.endswith(".stream"):
 					try:
 						if fileExists("%s.meta" % (movie)):
 							readmetafile = open("%s.meta" % (movie), "r")
