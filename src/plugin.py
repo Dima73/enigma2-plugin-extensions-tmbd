@@ -67,6 +67,14 @@ try:
 except ImportError:
 	SubsSupport = False
 
+try:
+	from Plugins.Extensions.SubsSupportPro.subtitles import E2SubsSeeker, SubsProSearch, initSubsProSettings, SubsProSetupGeneral, SubsProSearchSettings, SubsProSetupExternal, SubsProSetupEmbedded
+	from Plugins.Extensions.SubsSupportPro.subtitlesdvb import SubsProSupportDVB, SubsProSetupDVBPlayer
+	from Plugins.Extensions.SubsSupportPro.e2_utils import isFullHD
+	SubsSupportPro = True
+except ImportError:
+	SubsSupportPro = False
+
 plugin_version = "8.8"
 
 epg_furtherOptions = False
@@ -956,6 +964,8 @@ class TMBD(Screen):
 		list.append((_("Search TV-series"), self.TVseriesSearch))
 		if SubsSupport and self.curResult:
 			list.append((_("SubsSupport downloader"), self.searchSubs))
+		if SubsSupportPro and self.curResult:
+			list.append((_("SubsSupportPro downloader"), self.searchSubsPro))
 		list.append((_("Settings"), self.Menu2))
 		self.session.openWithCallback(self.menuCallback, ChoiceBox, list=list, title=_("Select action:"))
 
@@ -968,6 +978,18 @@ class TMBD(Screen):
 				try:
 					settings = initSubsSettings().search
 					self.session.open(SubsSearch, E2SubsSeeker(self.session, settings), settings, searchTitles=[namedetals], standAlone=True)
+				except:
+					pass
+
+	def searchSubsPro(self):
+		if self.curResult:
+			current = self["menu"].l.getCurrentSelection()
+			if current:
+				namedetals = self['menu'].l.getCurrentSelection()[0]
+				#namedetals = namedetals[:-7]
+				try:
+					settings = initSubsProSettings().search
+					self.session.open(SubsProSearch, E2SubsSeeker(self.session, settings), settings, searchTitles=[namedetals], standAlone=True)
 				except:
 					pass
 
